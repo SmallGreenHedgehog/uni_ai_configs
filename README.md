@@ -26,17 +26,25 @@ uni_ai_configs
 
 После установки становятся доступны консольные команды `build-codex` и `build-zoocode`.
 
-4.2. Установка в режиме разработки
+4.2. Установка из ветки develop
+
+    pip install "git+https://github.com/SmallGreenHedgehog/uni_ai_configs.git@develop"
+
+Для editable-установки:
+
+    pip install -e "git+https://github.com/SmallGreenHedgehog/uni_ai_configs.git@develop"
+
+4.3. Установка в режиме разработки
 
     pip install -e ".[dev]"
 
-4.3. Настройка пути к конфигам
+4.4. Настройка пути к конфигам
 
     cp .env.example .env
 
 По умолчанию используется путь config/agents. При необходимости задайте другой путь через переменную UNI_AGENTS_PATH в файле .env.
 
-4.4. Сборка конфигураций
+4.5. Сборка конфигураций
 
     build-zoocode
     build-codex
