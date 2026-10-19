@@ -22,12 +22,10 @@ dev = [
 ]
 
 [project.scripts]
-build-codex = "build_codex:main"
-build-zoocode = "build_zoocode:main"
+build-uni-ai = "cli.build:BuildCommand.run"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-py-modules = ["build_codex", "build_zoocode"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
