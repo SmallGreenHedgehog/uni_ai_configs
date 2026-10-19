@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -15,6 +16,11 @@ class Settings(BaseSettings):
     agents_dir: Path = Field(
         default=Path("config/agents"),
         validation_alias="UNI_AGENTS_PATH",
+    )
+
+    builder: Literal["codex", "zoocode"] = Field(
+        default="zoocode",
+        validation_alias="UNI_BUILDER",
     )
 
 

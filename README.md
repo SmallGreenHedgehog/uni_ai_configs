@@ -9,7 +9,10 @@ uni_ai_configs
 - config/agents/roles.yaml - роли агентов
 - config/agents/rules/ - правила в Markdown
 - config/agents/ignore - ignore-шаблоны
-- src/ - сборщики конфигураций для конкретных инструментов
+- src/cli/ - консольные команды
+- src/entities/ - модели ролей, правил и ignore-записей
+- src/application/ - сборщики конфигураций
+- src/infrastructure/ - чтение исходных данных и настройки окружения
 
 3. Требования
 
@@ -24,7 +27,7 @@ uni_ai_configs
     source .venv/bin/activate
     pip install .
 
-После установки становятся доступны консольные команды `build-codex` и `build-zoocode`.
+После установки становится доступна консольная команда `build-uni-ai`.
 
 4.2. Установка из ветки develop
 
@@ -38,18 +41,23 @@ uni_ai_configs
 
     pip install -e ".[dev]"
 
-4.4. Настройка пути к конфигам
+4.4. Настройка окружения
 
     cp .env.example .env
 
-По умолчанию используется путь config/agents. При необходимости задайте другой путь через переменную UNI_AGENTS_PATH в файле .env.
+В файле .env задаются:
+- UNI_AGENTS_PATH - путь к каталогу с исходными конфигами (по умолчанию config/agents)
+- UNI_BUILDER - сборщик: codex или zoocode (по умолчанию zoocode)
 
 4.5. Сборка конфигураций
 
-    build-zoocode
-    build-codex
+    build-uni-ai
 
-Команды выполняются из корня целевого проекта.
+Пример вызова с выбором сборщика без изменения .env:
+
+    UNI_BUILDER=codex build-uni-ai
+
+Команда выполняется из корня целевого проекта и собирает конфигурацию для сборщика, заданного в UNI_BUILDER.
 
 5. Результат сборки
 
