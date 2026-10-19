@@ -5,8 +5,9 @@ Project: a Python package that prepares AI agent environment configurations.
 Stack: Python, Pydantic v2, PyYAML, pytest, pytest-bdd.
 Approach: Domain-Driven Design (DDD).
 
-Entry point:
-- build_ai_config - console command that wires builders with repositories
+Entry points:
+- init-uni-ai - console command that creates universal agent configs from templates
+- build-uni-ai - console command that wires builders with repositories
 
 Layers:
 - src/entities - domain entities on Pydantic v2
