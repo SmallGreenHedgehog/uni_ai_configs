@@ -6,9 +6,8 @@ uni_ai_configs
 
 2. Состав
 
-- config/agents/roles.yaml - роли агентов
-- config/agents/rules/ - правила в Markdown
-- config/agents/ignore - ignore-шаблоны
+- src/templates/ - универсальные шаблоны конфигов агентов
+- config/agents/ - рабочая конфигурация проекта (роли, правила, ignore); создаётся командой init из шаблонов
 - src/cli/ - консольные команды
 - src/entities/ - модели ролей, правил и ignore-записей
 - src/application/ - сборщики конфигураций
@@ -27,7 +26,7 @@ uni_ai_configs
     source .venv/bin/activate
     pip install .
 
-После установки становится доступна консольная команда `build-uni-ai`.
+После установки становятся доступны консольные команды `init-uni-ai` и `build-uni-ai`.
 
 4.2. Установка из ветки develop
 
@@ -49,7 +48,17 @@ uni_ai_configs
 - UNI_AGENTS_PATH - путь к каталогу с исходными конфигами (по умолчанию config/agents)
 - UNI_BUILDER - сборщик: codex или zoocode (по умолчанию zoocode)
 
-4.5. Сборка конфигураций
+Через UNI_AGENTS_PATH можно указать другой каталог, если стандартный config/agents не подходит.
+
+4.5. Инициализация конфигов агентов
+
+    init-uni-ai
+
+Команда создаёт в целевом проекте каталог из UNI_AGENTS_PATH и наполняет его универсальными конфигами из src/templates: roles.yaml, rules/code-style.md и ignore. Существующие файлы не перезаписываются.
+
+После инициализации файлы можно донастроить под проект.
+
+4.6. Сборка конфигураций
 
     build-uni-ai
 
