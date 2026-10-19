@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uni-ai-configs"
+version = "0.1.0"
+description = "Prepares AI agent environment configurations from a single source of truth"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "pydantic>=2.14",
+    "pydantic-settings>=2.16",
+    "PyYAML>=6.0",
+    "python-dotenv>=1.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1",
+    "pytest-bdd>=9.0",
+]
+
+[project.scripts]
+build-codex = "build_codex:main"
+build-zoocode = "build_zoocode:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["build_codex", "build_zoocode"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

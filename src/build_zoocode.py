@@ -10,7 +10,7 @@ from infrastructure.settings import settings
 
 
 def main() -> None:
-    root_dir = Path(__file__).resolve().parents[1]
+    root_dir = Path.cwd()
     configured_agents_dir = settings.agents_dir
     if configured_agents_dir.is_absolute():
         agents_dir = configured_agents_dir

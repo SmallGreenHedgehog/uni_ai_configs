@@ -18,22 +18,30 @@ uni_ai_configs
 
 4. Quick start
 
-4.1. Установка зависимостей
+4.1. Установка пакета
 
     python3 -m venv .venv
     source .venv/bin/activate
-    pip install -r requirements.txt
+    pip install .
 
-4.2. Настройка пути к конфигам
+После установки становятся доступны консольные команды `build-codex` и `build-zoocode`.
+
+4.2. Установка в режиме разработки
+
+    pip install -e ".[dev]"
+
+4.3. Настройка пути к конфигам
 
     cp .env.example .env
 
 По умолчанию используется путь config/agents. При необходимости задайте другой путь через переменную UNI_AGENTS_PATH в файле .env.
 
-4.3. Сборка конфигураций
+4.4. Сборка конфигураций
 
-    ./src/build_zoocode.sh
-    ./src/build_codex.sh
+    build-zoocode
+    build-codex
+
+Команды выполняются из корня целевого проекта.
 
 5. Результат сборки
 
