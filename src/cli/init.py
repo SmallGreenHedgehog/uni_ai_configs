@@ -26,10 +26,10 @@ class InitCommand:
     @staticmethod
     def __create_template_files(agents_dir: Path) -> tuple[list[Path], list[Path]]:
         templates = files("templates")
-        template_parts = [("roles.yaml",), ("rules", "code-style.md"), ("ignore",)]
+        relative_paths = InitCommand.__collect_template_paths(templates)
         created_files: list[Path] = []
         skipped_files: list[Path] = []
-        for parts in template_parts:
+        for parts in relative_paths:
             target_path = agents_dir.joinpath(*parts)
             if target_path.exists():
                 skipped_files.append(target_path)
@@ -39,6 +39,20 @@ class InitCommand:
                 target_path.write_text(content, encoding="utf-8")
                 created_files.append(target_path)
         return created_files, skipped_files
+
+    @staticmethod
+    def __collect_template_paths(templates: Traversable) -> list[tuple[str, ...]]:
+        pending = [(templates, ())]
+        collected: list[tuple[str, ...]] = []
+        while pending:
+            current, prefix = pending.pop()
+            children = sorted(current.iterdir(), key=lambda child: child.name)
+            for child in children:
+                if child.is_dir():
+                    pending.append((child, prefix + (child.name,)))
+                else:
+                    collected.append(prefix + (child.name,))
+        return collected
 
     @staticmethod
     def __read_template(templates: Traversable, parts: tuple[str, ...]) -> str:
