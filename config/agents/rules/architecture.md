@@ -24,10 +24,10 @@ Acceptance (e2e) tests (pytest-bdd):
 - tests/acceptance/features - Gherkin .feature scenarios, grouped by CLI command under cli/build and cli/init
 - tests/acceptance/test_runners - pytest-bdd runner files connecting .feature scenarios to pytest
 - tests/acceptance/step_definitions - implementations of steps from .feature files; contain only step bindings, no helper logic
-- tests/acceptance/fixtures - pytest fixtures: clients, context, datasets, workspace
+- tests/acceptance/fixtures - pytest fixtures: clients, context, datasets, workspace; contain only @pytest.fixture definitions, no business logic
 - tests/acceptance/support - test support classes
-  - support/clients - CLI clients and file clients; base classes expose universal methods, subclasses implement abstract format hooks
-  - support/factories - polyfactory-based factories for domain entities (Role, Rule, IgnoreEntry)
+  - support/clients - CLI clients and file clients, split by data structure (markdown, ignore, yaml, codex config); base classes expose universal methods, subclasses implement abstract format hooks
+  - support/factories - polyfactory-based factories for domain entities (Role, Rule, IgnoreEntry); classmethods create sets, instance methods create a single element
   - support/context - Pydantic models for sharing scenario state between steps
   - support/expectations - helpers that compute expected values for assertions
 - tests/acceptance/conftest.py - connects fixtures and step definitions through pytest_plugins
