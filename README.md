@@ -36,9 +36,15 @@ uni_ai_configs
 
     pip install -e "git+https://github.com/SmallGreenHedgehog/uni_ai_configs.git@develop"
 
-4.3. Установка в режиме разработки
+4.3. Разработка пакета
+
+При работе с репозиторием самого пакета выполняется установка или переустановка пакета:
 
     pip install -e ".[dev]"
+
+После изменения конфигов пакета в config/agents выполняется сборка под выбранную среду:
+
+    build-uni-ai
 
 4.4. Настройка окружения
 
