@@ -75,6 +75,20 @@ uni_ai_configs
 
 Команда выполняется из корня целевого проекта и собирает конфигурацию для сборщика, заданного в UNI_BUILDER. По завершении команда выводит сообщение об успешной сборке с перечнем созданных файлов.
 
+4.7. Сборка бинарника (Nuitka)
+
+Для сборки нужен компилятор C (gcc или clang) и Nuitka:
+
+    pip install -e ".[nuitka]"
+    sh scripts/build_nuitka.sh
+
+Скрипт создаёт один исполняемый файл dist/uni-ai.bin. Бинарник содержит обе команды:
+
+    ./dist/uni-ai.bin init
+    ./dist/uni-ai.bin build
+
+Подкоманды повторяют поведение init-uni-ai и build-uni-ai.
+
 5. Результат сборки
 
 - Zoo Code: .roomodes, .roo/rules/, .rooignore

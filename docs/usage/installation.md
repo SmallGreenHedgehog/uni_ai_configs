@@ -33,3 +33,15 @@
 | UNI_BUILDER | сборщик конфигурации | ZooCode | Codex, ZooCode |
 
 Относительный путь UNI_AGENTS_PATH разрешается от корня проекта, в котором выполняется команда. Допускается абсолютный путь.
+
+6. Сборка бинарника Nuitka
+
+Для сборки нужен компилятор C (gcc или clang):
+
+    pip install -e ".[nuitka]"
+    sh scripts/build_nuitka.sh
+
+Скрипт создаёт один исполняемый файл dist/uni-ai.bin с подкомандами init и build:
+
+    ./dist/uni-ai.bin init
+    ./dist/uni-ai.bin build
