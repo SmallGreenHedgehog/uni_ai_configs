@@ -6,7 +6,11 @@ from pytest_bdd import given, parsers, then, when
 from infrastructure.repositories import MarkdownRulesRepository, TextIgnoreRepository, YamlRolesRepository
 from infrastructure.settings import settings
 from tests.acceptance.support.context import ScenarioState
-from tests.acceptance.support.expectations import CodexExpectations, RoomodesExpectations
+from tests.acceptance.support.expectations import (
+    build_codex_prompt,
+    extract_roomodes_description,
+    extract_roomodes_instruction_lines,
+)
 from tests.acceptance.support.factories import RoleFactory
 
 
@@ -101,7 +105,8 @@ def codex_agents_have_description(workspace: Path, codex_config_file_client) -> 
     agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
     descriptions = {role.slug: role.description for role in roles}
     for agent in agents:
-        expected = CodexExpectations.quote_description(descriptions[agent["slug"]])
+        description = descriptions[agent["slug"]]
+        expected = '"' + description.replace("\\", "\\\\").replace('"', '\\"') + '"'
         assert agent["description"] == expected
 
 
@@ -109,7 +114,7 @@ def codex_agents_have_description(workspace: Path, codex_config_file_client) -> 
 def codex_agents_have_prompt(workspace: Path, codex_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
-    prompts = {role.slug: CodexExpectations.render_prompt(role) for role in roles}
+    prompts = {role.slug: build_codex_prompt(role) for role in roles}
     for agent in agents:
         assert agent["prompt"] == prompts[agent["slug"]]
 
@@ -120,7 +125,7 @@ def codex_agents_have_prompt(workspace: Path, codex_config_file_client) -> None:
 def codex_prompt_combines_sections(workspace: Path, codex_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
-    prompts = {role.slug: CodexExpectations.render_prompt(role) for role in roles}
+    prompts = {role.slug: build_codex_prompt(role) for role in roles}
     for agent in agents:
         assert agent["prompt"] == prompts[agent["slug"]]
 
@@ -132,7 +137,7 @@ def description_matches_rendered(workspace: Path, rendered: str, codex_config_fi
         value = agents[0]["description"]
     else:
         content = (workspace / ".roomodes").read_text(encoding="utf-8")
-        value = RoomodesExpectations.read_description(content)
+        value = extract_roomodes_description(content)
     assert value == rendered
 
 
@@ -218,7 +223,7 @@ def modes_instructions_indented(workspace: Path, yaml_file_client) -> None:
     content = (workspace / ".roomodes").read_text(encoding="utf-8")
     modes = yaml_file_client.read(workspace / ".roomodes")["customModes"]
     assert content.count("customInstructions: |-") == len(modes)
-    instruction_lines = RoomodesExpectations.extract_instruction_lines(content)
+    instruction_lines = extract_roomodes_instruction_lines(content)
     assert instruction_lines
     for line in instruction_lines:
         assert line.startswith("      ")
@@ -252,7 +257,7 @@ def modes_have_source(workspace: Path, yaml_file_client) -> None:
 @then("итоговое поле description является пустой строкой в кавычках")
 def description_is_quoted_empty_string(workspace: Path) -> None:
     content = (workspace / ".roomodes").read_text(encoding="utf-8")
-    value = RoomodesExpectations.read_description(content)
+    value = extract_roomodes_description(content)
     assert value == '""'
 
 
