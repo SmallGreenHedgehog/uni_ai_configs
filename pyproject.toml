@@ -21,10 +21,13 @@ dev = [
     "pytest-bdd>=9.0",
     "polyfactory>=2.16",
 ]
+nuitka = [
+    "nuitka>=2.6",
+]
 
 [project.scripts]
-build-uni-ai = "cli.build:BuildCommand.run"
-init-uni-ai = "cli.init:InitCommand.run"
+build-uni-ai = "cli.commands.build:main"
+init-uni-ai = "cli.commands.init:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}

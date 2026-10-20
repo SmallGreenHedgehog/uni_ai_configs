@@ -29,3 +29,9 @@ env.*
 AGENTS.md
 .codex/
 .codexignore
+
+# Nuitka build artifacts
+build/
+dist/
+*.build/
+*.dist/

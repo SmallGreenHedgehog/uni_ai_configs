@@ -2,8 +2,8 @@ import contextlib
 import io
 from abc import ABC, abstractmethod
 
-from cli.build import BuildCommand
-from cli.init import InitCommand
+from cli.commands.build import BuildCommand
+from cli.commands.init import InitCommand
 
 
 class CliClient(ABC):
@@ -21,9 +21,9 @@ class CliClient(ABC):
 
 class BuildClient(CliClient):
     def _execute_command(self) -> None:
-        BuildCommand.run()
+        BuildCommand().run()
 
 
 class InitClient(CliClient):
     def _execute_command(self) -> None:
-        InitCommand.run()
+        InitCommand().run()
