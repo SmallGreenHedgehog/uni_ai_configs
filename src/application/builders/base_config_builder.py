@@ -22,7 +22,7 @@ class BaseConfigBuilder(ABC):
         self._rules_repository = rules_repository
         self._ignore_repository = ignore_repository
 
-    def build(self) -> None:
+    def build(self) -> str:
         roles = self._roles_repository.get_roles()
         self._build_roles(roles)
 
@@ -32,14 +32,18 @@ class BaseConfigBuilder(ABC):
         ignore_entries = self._ignore_repository.get_ignore_entries()
         self._build_ignore(ignore_entries)
 
-    @abstractmethod
-    def _build_roles(self, roles: list[Role]) -> None:
-        ...
+        message = self._success_message
+        return message
 
     @abstractmethod
-    def _build_rules(self, rules: list[Rule]) -> None:
-        ...
+    def _build_roles(self, roles: list[Role]) -> None: ...
 
     @abstractmethod
-    def _build_ignore(self, ignore_entries: list[IgnoreEntry]) -> None:
-        ...
+    def _build_rules(self, rules: list[Rule]) -> None: ...
+
+    @abstractmethod
+    def _build_ignore(self, ignore_entries: list[IgnoreEntry]) -> None: ...
+
+    @property
+    @abstractmethod
+    def _success_message(self) -> str: ...

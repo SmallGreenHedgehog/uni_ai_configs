@@ -2,11 +2,12 @@
 
 Project: a Python package that prepares AI agent environment configurations.
 
-Stack: Python, Pydantic v2, PyYAML, pytest, pytest-bdd.
+Stack: Python, Pydantic v2, PyYAML, pytest, pytest-bdd, polyfactory.
 Approach: Domain-Driven Design (DDD).
 
-Entry point:
-- build_ai_config - console command that wires builders with repositories
+Entry points:
+- init-uni-ai - console command that creates universal agent configs from templates
+- build-uni-ai - console command that wires builders with repositories
 
 Layers:
 - src/entities - domain entities on Pydantic v2
@@ -20,10 +21,16 @@ Tests:
 - tests/acceptance - e2e tests (pytest-bdd)
 
 Acceptance (e2e) tests (pytest-bdd):
-- tests/acceptance/features - Gherkin .feature scenarios
+- tests/acceptance/features - Gherkin .feature scenarios, grouped by CLI command under cli/build and cli/init
 - tests/acceptance/test_runners - pytest-bdd runner files connecting .feature scenarios to pytest
-- tests/acceptance/step_definitions - implementations of steps from .feature files
-- tests/acceptance/support - pytest fixtures and clients for exercising the build tooling
+- tests/acceptance/step_definitions - implementations of steps from .feature files; contain only step bindings, no helper logic
+- tests/acceptance/fixtures - pytest fixtures: clients, context, datasets, workspace; contain only @pytest.fixture definitions, no business logic
+- tests/acceptance/support - test support classes
+  - support/clients - CLI clients and file clients, split by data structure (markdown, ignore, yaml, codex config); base classes expose universal methods, subclasses implement abstract format hooks
+  - support/factories - polyfactory-based factories for domain entities (Role, Rule, IgnoreEntry); classmethods create sets, instance methods create a single element
+  - support/context - Pydantic models for sharing scenario state between steps
+  - support/expectations - helpers that compute expected values for assertions
+- tests/acceptance/conftest.py - connects fixtures and step definitions through pytest_plugins
 
 Dependency rules:
 - Use dependency injection to consume infrastructure from the application layer

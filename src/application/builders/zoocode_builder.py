@@ -7,6 +7,11 @@ from entities import IgnoreEntry, Role, Rule
 
 
 class ZooCodeBuilder(BaseConfigBuilder):
+    @property
+    def _success_message(self) -> str:
+        message = "Built Zoo Code config: .roomodes, .roo/rules/, .rooignore"
+        return message
+
     def _build_roles(self, roles: list[Role]) -> None:
         lines = ["customModes:"]
         for role in roles:
