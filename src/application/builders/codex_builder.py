@@ -3,6 +3,11 @@ from entities import IgnoreEntry, Role, Rule
 
 
 class CodexBuilder(BaseConfigBuilder):
+    @property
+    def _success_message(self) -> str:
+        message = "Built Codex config: AGENTS.md, .codex/config.toml, .codexignore"
+        return message
+
     def _build_roles(self, roles: list[Role]) -> None:
         config_dir = self._root_dir / ".codex"
         config_dir.mkdir(parents=True, exist_ok=True)

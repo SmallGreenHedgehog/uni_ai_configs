@@ -16,12 +16,12 @@ from tests.acceptance.support.factories import RoleFactory
 
 @given("сборщик настроен на Codex")
 def set_codex_builder() -> None:
-    settings.builder = "codex"
+    settings.builder = "Codex"
 
 
 @given("сборщик настроен на Zoo Code")
 def set_zoocode_builder() -> None:
-    settings.builder = "zoocode"
+    settings.builder = "ZooCode"
 
 
 @given("исходная конфигурация агентов существует в каталоге конфигурации агентов")
@@ -132,7 +132,7 @@ def codex_prompt_combines_sections(workspace: Path, codex_config_file_client) ->
 
 @then(parsers.parse("итоговое поле description равно {rendered}"))
 def description_matches_rendered(workspace: Path, rendered: str, codex_config_file_client) -> None:
-    if settings.builder == "codex":
+    if settings.builder == "Codex":
         agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
         value = agents[0]["description"]
     else:
@@ -175,7 +175,7 @@ def codex_rules_alphabetical(workspace: Path, markdown_file_client) -> None:
 @then("файл содержит каждый непустой ignore-шаблон на отдельной строке")
 def ignore_file_has_patterns(workspace: Path, ignore_file_client) -> None:
     entries = TextIgnoreRepository(settings.agents_dir).get_ignore_entries()
-    if settings.builder == "codex":
+    if settings.builder == "Codex":
         path = workspace / ".codexignore"
     else:
         path = workspace / ".rooignore"
