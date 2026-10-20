@@ -46,7 +46,7 @@ uni_ai_configs
 
 В файле .env задаются:
 - UNI_AGENTS_PATH - путь к каталогу с исходными конфигами (по умолчанию config/agents)
-- UNI_BUILDER - сборщик: codex или zoocode (по умолчанию zoocode)
+- UNI_BUILDER - сборщик: Codex или ZooCode (по умолчанию ZooCode)
 
 Через UNI_AGENTS_PATH можно указать другой каталог, если стандартный config/agents не подходит.
 
@@ -64,7 +64,7 @@ uni_ai_configs
 
 Пример вызова с выбором сборщика без изменения .env:
 
-    UNI_BUILDER=codex build-uni-ai
+    UNI_BUILDER=Codex build-uni-ai
 
 Команда выполняется из корня целевого проекта и собирает конфигурацию для сборщика, заданного в UNI_BUILDER.
 

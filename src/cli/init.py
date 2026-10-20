@@ -1,66 +1,29 @@
-from importlib.resources import files
-from importlib.resources.abc import Traversable
 from pathlib import Path
 
-from infrastructure.settings import settings
+from application.initializers import ConfigInitializer
+from cli.agent_config_command import AgentConfigCommand
+from infrastructure.repositories import (
+    PackageIgnoreTemplateRepository,
+    PackageRolesTemplateRepository,
+    PackageRulesTemplateRepository,
+)
 
 
-class InitCommand:
-    @staticmethod
-    def run() -> None:
-        root_dir = Path.cwd()
-        agents_dir = InitCommand.__resolve_agents_dir(root_dir)
-        created_files, skipped_files = InitCommand.__create_template_files(agents_dir)
-        report = InitCommand.__render_report(created_files, skipped_files)
+class InitCommand(AgentConfigCommand):
+    @classmethod
+    def _execute_for_agents_dir(cls, root_dir: Path, agents_dir: Path) -> None:
+        roles_template_repository = PackageRolesTemplateRepository()
+        rules_template_repository = PackageRulesTemplateRepository()
+        ignore_template_repository = PackageIgnoreTemplateRepository()
+        initializer = ConfigInitializer(
+            agents_dir=agents_dir,
+            roles_template_repository=roles_template_repository,
+            rules_template_repository=rules_template_repository,
+            ignore_template_repository=ignore_template_repository,
+        )
+        created_files, skipped_files = initializer.initialize()
+        report = cls.__render_report(created_files, skipped_files)
         print(report)
-
-    @staticmethod
-    def __resolve_agents_dir(root_dir: Path) -> Path:
-        configured_agents_dir = settings.agents_dir
-        if configured_agents_dir.is_absolute():
-            agents_dir = configured_agents_dir
-        else:
-            agents_dir = root_dir / configured_agents_dir
-        return agents_dir
-
-    @staticmethod
-    def __create_template_files(agents_dir: Path) -> tuple[list[Path], list[Path]]:
-        templates = files("templates")
-        relative_paths = InitCommand.__collect_template_paths(templates)
-        created_files: list[Path] = []
-        skipped_files: list[Path] = []
-        for parts in relative_paths:
-            target_path = agents_dir.joinpath(*parts)
-            if target_path.exists():
-                skipped_files.append(target_path)
-            else:
-                content = InitCommand.__read_template(templates, parts)
-                target_path.parent.mkdir(parents=True, exist_ok=True)
-                target_path.write_text(content, encoding="utf-8")
-                created_files.append(target_path)
-        return created_files, skipped_files
-
-    @staticmethod
-    def __collect_template_paths(templates: Traversable) -> list[tuple[str, ...]]:
-        pending = [(templates, ())]
-        collected: list[tuple[str, ...]] = []
-        while pending:
-            current, prefix = pending.pop()
-            children = sorted(current.iterdir(), key=lambda child: child.name)
-            for child in children:
-                if child.is_dir():
-                    pending.append((child, prefix + (child.name,)))
-                else:
-                    collected.append(prefix + (child.name,))
-        return collected
-
-    @staticmethod
-    def __read_template(templates: Traversable, parts: tuple[str, ...]) -> str:
-        source = templates
-        for part in parts:
-            source = source / part
-        content = source.read_text(encoding="utf-8")
-        return content
 
     @staticmethod
     def __render_report(created_files: list[Path], skipped_files: list[Path]) -> str:
