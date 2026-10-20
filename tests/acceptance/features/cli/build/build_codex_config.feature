@@ -31,7 +31,7 @@ Feature: Сборка конфигурации Codex
     Examples:
       | raw          | rendered          |
       | He said "hi" | "He said \"hi\""  |
-      | C:\temp\data | "C:\\temp\\data"  |
+      | C:\temp\data | "C:\\\\temp\\\\data"  |
 
   Scenario: Codex экранирует обратные слеши в блоке prompt
     Given роль, чьи пользовательские инструкции содержат обратный слеш
