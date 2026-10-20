@@ -5,7 +5,7 @@ import pytest
 from infrastructure.settings import settings
 
 
-@pytest.fixture
+@pytest.fixture(autouse=True)
 def workspace(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     agents_dir = tmp_path / "config" / "agents"
     monkeypatch.chdir(tmp_path)
