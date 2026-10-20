@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from application.initializers import ConfigInitializer
-from cli.agent_config_command import AgentConfigCommand
+from cli.commands.base.agent_config_command import AgentConfigCommand
 from infrastructure.repositories import (
     PackageIgnoreTemplateRepository,
     PackageRolesTemplateRepository,
@@ -10,8 +10,17 @@ from infrastructure.repositories import (
 
 
 class InitCommand(AgentConfigCommand):
-    @classmethod
-    def _execute_for_agents_dir(cls, root_dir: Path, agents_dir: Path) -> None:
+    @property
+    def name(self) -> str:
+        name = "init"
+        return name
+
+    @property
+    def help_text(self) -> str:
+        help_text = "Initialize agent configs from package templates"
+        return help_text
+
+    def _execute_for_agents_dir(self, root_dir: Path, agents_dir: Path) -> None:
         roles_template_repository = PackageRolesTemplateRepository()
         rules_template_repository = PackageRulesTemplateRepository()
         ignore_template_repository = PackageIgnoreTemplateRepository()
@@ -22,7 +31,7 @@ class InitCommand(AgentConfigCommand):
             ignore_template_repository=ignore_template_repository,
         )
         created_files, skipped_files = initializer.initialize()
-        report = cls.__render_report(created_files, skipped_files)
+        report = self.__render_report(created_files, skipped_files)
         print(report)
 
     @staticmethod
@@ -38,3 +47,7 @@ class InitCommand(AgentConfigCommand):
             lines.append("No agent configs to initialize.")
         report = "\n".join(lines)
         return report
+
+
+def main() -> None:
+    InitCommand().run()

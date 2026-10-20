@@ -7,7 +7,7 @@ from application.interfaces.repositories import (
     RolesRepository,
     RulesRepository,
 )
-from cli.agent_config_command import AgentConfigCommand
+from cli.commands.base.agent_config_command import AgentConfigCommand
 from infrastructure.repositories import (
     MarkdownRulesRepository,
     TextIgnoreRepository,
@@ -17,12 +17,21 @@ from infrastructure.settings import settings
 
 
 class BuildCommand(AgentConfigCommand):
-    @classmethod
-    def _execute_for_agents_dir(cls, root_dir: Path, agents_dir: Path) -> None:
+    @property
+    def name(self) -> str:
+        name = "build"
+        return name
+
+    @property
+    def help_text(self) -> str:
+        help_text = "Build native agent configs"
+        return help_text
+
+    def _execute_for_agents_dir(self, root_dir: Path, agents_dir: Path) -> None:
         roles_repository = YamlRolesRepository(agents_dir)
         rules_repository = MarkdownRulesRepository(agents_dir)
         ignore_repository = TextIgnoreRepository(agents_dir)
-        builder = cls.__create_builder(
+        builder = self.__create_builder(
             root_dir=root_dir,
             roles_repository=roles_repository,
             rules_repository=rules_repository,
@@ -46,3 +55,7 @@ class BuildCommand(AgentConfigCommand):
             ignore_repository=ignore_repository,
         )
         return builder
+
+
+def main() -> None:
+    BuildCommand().run()
