@@ -32,3 +32,8 @@ Do not write one-line methods - expand them into several readable statements
 Keep a single entry point and a single exit point in a method (function); use well-named variables for intermediate results
 Use early returns only when they significantly improve readability and cannot be avoided
 Assign the result to a variable before returning from a method (function) - it simplifies debugging
+
+Inheritance and Template Method:
+Place universal behavior in the base class and move the differing details into subclasses
+Declare subclass hooks with @abstractmethod when the method can be abstract; otherwise use raise NotImplementedError (for example, ORM model methods that cannot be abstract)
+A subclass must depend on the base class contract, not on its implementation details

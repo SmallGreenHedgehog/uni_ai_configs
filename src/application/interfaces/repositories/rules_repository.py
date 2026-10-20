@@ -5,5 +5,4 @@ from entities import Rule
 
 class RulesRepository(ABC):
     @abstractmethod
-    def get_rules(self) -> list[Rule]:
-        ...
+    def get_rules(self) -> list[Rule]: ...
