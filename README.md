@@ -1,4 +1,6 @@
-uni_ai_configs
+<h1>uni_ai_configs</h1>
+
+Готовые бинарники публикуются на [странице релизов](https://github.com/SmallGreenHedgehog/uni_ai_configs/releases).
 
 1. Назначение
 
@@ -6,17 +8,17 @@ uni_ai_configs
 
 2. Состав
 
-- src/templates/ - универсальные шаблоны конфигов агентов
-- config/agents/ - рабочая конфигурация целевого проекта (роли, правила, ignore); создаётся командой init из шаблонов и донастраивается под проект
-- src/cli/ - консольные команды
-- src/entities/ - модели ролей, правил и ignore-записей
-- src/application/ - сборщики конфигураций и инициализация конфигураций из шаблонов
-- src/infrastructure/ - чтение исходных данных и шаблонов, настройки окружения
-- docs/ - документация проекта
+- [`src/templates/`](src/templates) - универсальные шаблоны конфигов агентов
+- [`config/agents/`](config/agents) - рабочая конфигурация целевого проекта (роли, правила, ignore); создаётся командой init из шаблонов и донастраивается под проект
+- [`src/cli/`](src/cli) - консольные команды
+- [`src/entities/`](src/entities) - модели ролей, правил и ignore-записей
+- [`src/application/`](src/application) - сборщики конфигураций и инициализация конфигураций из шаблонов
+- [`src/infrastructure/`](src/infrastructure) - чтение исходных данных и шаблонов, настройки окружения
+- [`docs/`](docs) - документация проекта
 
 3. Требования
 
-- Python 3.9+ (generic-типы list[...] используются в рантайме)
+- Python 3.12
 - pip
 
 4. Quick start
@@ -27,7 +29,7 @@ uni_ai_configs
     source .venv/bin/activate
     pip install .
 
-После установки становятся доступны консольные команды `init-uni-ai` и `build-uni-ai`.
+После установки становятся доступны консольные команды [`init-uni-ai`](pyproject.toml:30) и [`build-uni-ai`](pyproject.toml:29).
 
 4.2. Установка из ветки develop
 
@@ -43,7 +45,7 @@ uni_ai_configs
 
     pip install -e ".[dev]"
 
-После изменения конфигов пакета в config/agents выполняется сборка под выбранную среду:
+После изменения конфигов пакета в [`config/agents`](config/agents) выполняется сборка под выбранную среду:
 
     build-uni-ai
 
@@ -51,17 +53,17 @@ uni_ai_configs
 
     cp .env.example .env
 
-В файле .env задаются:
-- UNI_AGENTS_PATH - путь к каталогу с исходными конфигами (по умолчанию config/agents)
-- UNI_BUILDER - сборщик: Codex или ZooCode (по умолчанию ZooCode)
+В файле `.env` задаются:
+- [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) - путь к каталогу с исходными конфигами (по умолчанию [`config/agents`](config/agents))
+- [`UNI_BUILDER`](src/infrastructure/settings.py:23) - сборщик: Codex, ZooCode или ClaudeAgent (по умолчанию ZooCode)
 
-Через UNI_AGENTS_PATH можно указать другой каталог, если стандартный config/agents не подходит. Путь может быть относительным (разрешается от корня проекта, где выполняется команда) или абсолютным.
+Через [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) можно указать другой каталог, если стандартный [`config/agents`](config/agents) не подходит. Путь может быть относительным (разрешается от корня проекта, где выполняется команда) или абсолютным.
 
 4.5. Инициализация конфигов агентов
 
     init-uni-ai
 
-Команда выполняется из корня целевого проекта, создаёт каталог из UNI_AGENTS_PATH и копирует в него шаблоны из пакета: роли (roles.yaml), правила (rules/) и ignore-шаблоны (ignore). Создаются файлы roles.yaml, ignore, rules/architecture.md и rules/code-style.md. Файл rules/architecture.md создаётся как заглушка и предназначен для описания архитектуры проекта. Существующие файлы не перезаписываются; команда выводит списки созданных и пропущенных файлов.
+Команда выполняется из корня целевого проекта, создаёт каталог из [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) и копирует в него шаблоны из пакета: роли ([`roles.yaml`](config/agents/roles.yaml)), правила ([`rules/`](config/agents/rules)) и ignore-шаблоны ([`ignore`](config/agents/ignore)). Создаются файлы [`roles.yaml`](config/agents/roles.yaml), [`ignore`](config/agents/ignore), [`rules/architecture.md`](config/agents/rules/architecture.md) и [`rules/code-style.md`](config/agents/rules/code-style.md). Файл [`rules/architecture.md`](config/agents/rules/architecture.md) создаётся как заглушка и предназначен для описания архитектуры проекта. Существующие файлы не перезаписываются; команда выводит списки созданных и пропущенных файлов.
 
 После инициализации файлы можно донастроить под проект.
 
@@ -69,11 +71,11 @@ uni_ai_configs
 
     build-uni-ai
 
-Пример вызова с выбором сборщика без изменения .env:
+Пример вызова с выбором сборщика без изменения `.env`:
 
-    UNI_BUILDER=Codex build-uni-ai
+    UNI_BUILDER=ClaudeAgent build-uni-ai
 
-Команда выполняется из корня целевого проекта и собирает конфигурацию для сборщика, заданного в UNI_BUILDER. По завершении команда выводит сообщение об успешной сборке с перечнем созданных файлов.
+Команда выполняется из корня целевого проекта и собирает конфигурацию для сборщика, заданного в [`UNI_BUILDER`](src/infrastructure/settings.py:23): Codex, ZooCode или ClaudeAgent. По завершении команда выводит сообщение об успешной сборке с перечнем созданных файлов.
 
 4.7. Сборка бинарника (Nuitka)
 
@@ -82,17 +84,18 @@ uni_ai_configs
     pip install -e ".[nuitka]"
     sh scripts/build_nuitka.sh
 
-Скрипт создаёт один исполняемый файл dist/uni-ai.bin. Бинарник содержит обе команды:
+Скрипт создаёт один исполняемый файл `dist/uni-ai.bin`. Бинарник содержит обе команды:
 
     ./dist/uni-ai.bin init
     ./dist/uni-ai.bin build
 
-Подкоманды повторяют поведение init-uni-ai и build-uni-ai.
+Подкоманды повторяют поведение [`init-uni-ai`](pyproject.toml:30) и [`build-uni-ai`](pyproject.toml:29).
 
 5. Результат сборки
 
-- Zoo Code: .roomodes, .roo/rules/, .rooignore
-- Codex: AGENTS.md, .codex/config.toml, .codexignore
+- Zoo Code: [`.roomodes`](src/application/builders/zoocode_builder.py:18), [`.roo/rules/`](src/application/builders/zoocode_builder.py:46), [`.rooignore`](src/application/builders/zoocode_builder.py:53)
+- Codex: [`AGENTS.md`](src/application/builders/codex_builder.py:43), [`.codex/config.toml`](src/application/builders/codex_builder.py:18), [`.codexignore`](src/application/builders/codex_builder.py:47)
+- Claude Agent: [`.claude/agents/`](src/application/builders/claude_agent_builder.py:14), [`.claude/rules/`](src/application/builders/claude_agent_builder.py:34), [`.claudeignore`](src/application/builders/claude_agent_builder.py:41)
 
 Сгенерированные файлы исключены из Git и не редактируются вручную.
 
@@ -100,4 +103,4 @@ uni_ai_configs
 
     pytest
 
-Тесты размещены в tests/unit, tests/integration и tests/acceptance. Приёмочные сценарии (pytest-bdd) находятся в tests/acceptance/features.
+Тесты размещены в `tests/unit`, `tests/integration` и `tests/acceptance`. Приёмочные сценарии (pytest-bdd) находятся в `tests/acceptance/features`.
