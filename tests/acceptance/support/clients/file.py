@@ -86,3 +86,31 @@ class CodexConfigFileClient(FileClient[list[dict]]):
             sections.append("")
         content = "\n".join(sections) + "\n"
         return content
+
+
+class ClaudeAgentConfigFileClient(FileClient[dict]):
+    def _load_content(self, content: str) -> dict:
+        frontmatter, body = self.__split_document(content)
+        metadata = yaml.safe_load(frontmatter)
+        agent = {
+            "name": metadata["name"],
+            "description": metadata["description"],
+            "body": body,
+        }
+        return agent
+
+    @staticmethod
+    def __split_document(content: str) -> tuple[str, str]:
+        parts = content.split("---", 2)
+        frontmatter = parts[1].strip("\n")
+        body = parts[2].strip("\n")
+        return frontmatter, body
+
+    def _dump_content(self, data: dict) -> str:
+        frontmatter = yaml.safe_dump(
+            {"name": data["name"], "description": data["description"]},
+            sort_keys=False,
+            allow_unicode=True,
+        )
+        content = f"---\n{frontmatter}---\n\n{data['body']}\n"
+        return content

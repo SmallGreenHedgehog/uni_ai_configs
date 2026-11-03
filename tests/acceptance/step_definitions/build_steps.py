@@ -7,7 +7,9 @@ from infrastructure.repositories import MarkdownRulesRepository, TextIgnoreRepos
 from infrastructure.settings import settings
 from tests.acceptance.support.context import ScenarioState
 from tests.acceptance.support.expectations import (
+    build_claude_agent_body,
     build_codex_prompt,
+    extract_claude_description,
     extract_roomodes_description,
     extract_roomodes_instruction_lines,
 )
@@ -22,6 +24,11 @@ def set_codex_builder() -> None:
 @given("сборщик настроен на Zoo Code")
 def set_zoocode_builder() -> None:
     settings.builder = "ZooCode"
+
+
+@given("сборщик настроен на Claude Agent")
+def set_claude_agent_builder() -> None:
+    settings.builder = "ClaudeAgent"
 
 
 @given("исходная конфигурация агентов существует в каталоге конфигурации агентов")
@@ -49,6 +56,12 @@ def zoocode_outputs_absent(workspace: Path) -> None:
     (workspace / ".roomodes").unlink(missing_ok=True)
     shutil.rmtree(workspace / ".roo", ignore_errors=True)
     (workspace / ".rooignore").unlink(missing_ok=True)
+
+
+@given("сгенерированные файлы конфигурации Claude Agent отсутствуют")
+def claude_agent_outputs_absent(workspace: Path) -> None:
+    shutil.rmtree(workspace / ".claude", ignore_errors=True)
+    (workspace / ".claudeignore").unlink(missing_ok=True)
 
 
 @given(parsers.parse("роль с description {raw}"))
@@ -79,6 +92,11 @@ def build_codex_executed(build_client, scenario_state: ScenarioState) -> None:
 
 @when("сборка конфигурации Zoo Code выполнена")
 def build_zoocode_executed(build_client, scenario_state: ScenarioState) -> None:
+    scenario_state.command_output = build_client.run()
+
+
+@when("сборка конфигурации Claude Agent выполнена")
+def build_claude_agent_executed(build_client, scenario_state: ScenarioState) -> None:
     scenario_state.command_output = build_client.run()
 
 
@@ -135,6 +153,10 @@ def description_matches_rendered(workspace: Path, rendered: str, codex_config_fi
     if settings.builder == "Codex":
         agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
         value = agents[0]["description"]
+    elif settings.builder == "ClaudeAgent":
+        agent_path = next((workspace / ".claude" / "agents").glob("*.md"))
+        content = agent_path.read_text(encoding="utf-8")
+        value = extract_claude_description(content)
     else:
         content = (workspace / ".roomodes").read_text(encoding="utf-8")
         value = extract_roomodes_description(content)
@@ -177,6 +199,8 @@ def ignore_file_has_patterns(workspace: Path, ignore_file_client) -> None:
     entries = TextIgnoreRepository(settings.agents_dir).get_ignore_entries()
     if settings.builder == "Codex":
         path = workspace / ".codexignore"
+    elif settings.builder == "ClaudeAgent":
+        path = workspace / ".claudeignore"
     else:
         path = workspace / ".rooignore"
     lines = ignore_file_client.read(path)
@@ -256,8 +280,13 @@ def modes_have_source(workspace: Path, yaml_file_client) -> None:
 
 @then("итоговое поле description является пустой строкой в кавычках")
 def description_is_quoted_empty_string(workspace: Path) -> None:
-    content = (workspace / ".roomodes").read_text(encoding="utf-8")
-    value = extract_roomodes_description(content)
+    if settings.builder == "ClaudeAgent":
+        agent_path = next((workspace / ".claude" / "agents").glob("*.md"))
+        content = agent_path.read_text(encoding="utf-8")
+        value = extract_claude_description(content)
+    else:
+        content = (workspace / ".roomodes").read_text(encoding="utf-8")
+        value = extract_roomodes_description(content)
     assert value == '""'
 
 
@@ -270,8 +299,53 @@ def roomodes_rules_dir_matches(workspace: Path) -> None:
 
 
 @then("каждый файл правила сохраняет исходное имя файла и содержимое")
-def roomodes_rule_files_match(workspace: Path) -> None:
+def rule_files_match(workspace: Path) -> None:
     rules = MarkdownRulesRepository(settings.agents_dir).get_rules()
+    rules_dir = workspace / ".claude" / "rules" if settings.builder == "ClaudeAgent" else workspace / ".roo" / "rules"
     for rule in rules:
-        content = (workspace / ".roo" / "rules" / rule.filename).read_text(encoding="utf-8")
+        content = (rules_dir / rule.filename).read_text(encoding="utf-8")
         assert content == rule.content
+
+
+@then(parsers.parse("каталог существует по пути {path}"))
+def directory_exists(workspace: Path, path: str) -> None:
+    assert (workspace / path).is_dir()
+
+
+@then("каталог содержит один файл агента для каждой роли из roles.yaml")
+def claude_agents_have_file_per_role(workspace: Path) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    generated_slugs = {path.stem for path in (workspace / ".claude" / "agents").glob("*.md")}
+    assert generated_slugs == {role.slug for role in roles}
+
+
+@then("каждый файл агента содержит соответствующие поля name и description")
+def claude_agents_have_metadata(workspace: Path, claude_agent_config_file_client) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    for role in roles:
+        agent = claude_agent_config_file_client.read(workspace / ".claude" / "agents" / f"{role.slug}.md")
+        assert agent["name"] == role.slug
+        assert agent["description"] == role.description
+
+
+@then(
+    "для каждой роли тело файла агента содержит определение роли, условия применения и пользовательские инструкции, разделённые пустыми строками"
+)
+def claude_agents_have_body(workspace: Path, claude_agent_config_file_client) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    for role in roles:
+        agent = claude_agent_config_file_client.read(workspace / ".claude" / "agents" / f"{role.slug}.md")
+        assert agent["body"] == build_claude_agent_body(role)
+
+
+@then("каталог .claude/rules содержит только файлы правил из каталога конфигурации агентов")
+def claude_rules_dir_matches(workspace: Path) -> None:
+    rules = MarkdownRulesRepository(settings.agents_dir).get_rules()
+    generated_names = {path.name for path in (workspace / ".claude" / "rules").glob("*")}
+    expected_names = {rule.filename for rule in rules}
+    assert generated_names == expected_names
+
+
+@then("вывод команды сообщает об успешной сборке конфигурации Claude Agent")
+def claude_agent_success_reported(scenario_state: ScenarioState) -> None:
+    assert "Built Claude Agent config" in scenario_state.command_output
