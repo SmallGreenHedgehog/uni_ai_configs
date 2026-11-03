@@ -40,17 +40,17 @@
 
 Создаваемые файлы:
 
-- [`.claude/agents/`](src/application/builders/claude_agent_builder.py:14) - по одному файлу на роль
-- [`.claude/rules/`](src/application/builders/claude_agent_builder.py:34) - файлы правил
-- [`.claudeignore`](src/application/builders/claude_agent_builder.py:41) - ignore-шаблоны
+- [`.claude/agents/`](src/application/builders/claude_agent_builder.py:13) - по одному файлу на роль
+- [`.claude/rules/`](src/application/builders/claude_agent_builder.py:39) - файлы правил
+- [`.claudeignore`](src/application/builders/claude_agent_builder.py:45) - ignore-шаблоны
 
 | Элемент конфигурации | Файл результата |
 |---|---|
-| роли | [`.claude/agents/`](src/application/builders/claude_agent_builder.py:14) |
-| правила | [`.claude/rules/`](src/application/builders/claude_agent_builder.py:34) |
-| ignore-записи | [`.claudeignore`](src/application/builders/claude_agent_builder.py:41) |
+| роли | [`.claude/agents/`](src/application/builders/claude_agent_builder.py:13) |
+| правила | [`.claude/rules/`](src/application/builders/claude_agent_builder.py:39) |
+| ignore-записи | [`.claudeignore`](src/application/builders/claude_agent_builder.py:45) |
 
-Для каждой роли создаётся отдельный Markdown-файл с именем `{slug}.md`. Файл содержит метаданные `name` и `description`, а также тело, объединяющее определение роли, условия применения и инструкции, разделённые пустыми строками. Каталог `.claude/rules` пересоздаётся заново и содержит только файлы правил из исходной конфигурации.
+Для каждой роли создаётся отдельный Markdown-файл с именем `{index}-{slug}.md`, где `index` - номер роли в [`roles.yaml`](config/agents/roles.yaml) начиная с 1, дополненный нулём до двух знаков. Метаданное `name` совпадает с именем файла без расширения, поэтому список агентов в Claude Agent отображается в порядке ролей из [`roles.yaml`](config/agents/roles.yaml). Файл содержит метаданные `name` и `description`, а также тело, объединяющее определение роли, условия применения и инструкции, разделённые пустыми строками. Каталог `.claude/rules` пересоздаётся заново и содержит только файлы правил из исходной конфигурации.
 
 5. Общие правила
 

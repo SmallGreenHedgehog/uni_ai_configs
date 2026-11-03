@@ -14,6 +14,10 @@ Feature: Сборка конфигурации Claude Agent
     Then каталог существует по пути .claude/agents
     And каталог содержит один файл агента для каждой роли из roles.yaml
 
+  Scenario: Файлы агентов Claude Agent пронумерованы в порядке ролей roles.yaml
+    When сборка конфигурации Claude Agent выполнена
+    Then файлы агентов пронумерованы в том же порядке, что и роли из roles.yaml
+
   Scenario: Каждый агент Claude Agent содержит метаданные роли
     When сборка конфигурации Claude Agent выполнена
     Then каждый файл агента содержит соответствующие поля name и description

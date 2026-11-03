@@ -13,15 +13,21 @@ class ClaudeAgentBuilder(BaseConfigBuilder):
     def _build_roles(self, roles: list[Role]) -> None:
         agents_dir = self._root_dir / ".claude" / "agents"
         replace_dir(agents_dir)
-        for role in roles:
-            content = self.__render_agent(role)
-            (agents_dir / f"{role.slug}.md").write_text(content, encoding="utf-8")
+        for index, role in enumerate(roles, start=1):
+            agent_name = self.__build_agent_name(role, index)
+            content = self.__render_agent(role, agent_name)
+            (agents_dir / f"{agent_name}.md").write_text(content, encoding="utf-8")
 
     @staticmethod
-    def __render_agent(role: Role) -> str:
+    def __build_agent_name(role: Role, index: int) -> str:
+        agent_name = f"{index:02d}-{role.slug}"
+        return agent_name
+
+    @staticmethod
+    def __render_agent(role: Role, agent_name: str) -> str:
         frontmatter = [
             "---",
-            f"name: {role.slug}",
+            f"name: {agent_name}",
             f"description: {quote_value_if_needed(role.description)}",
             "---",
             "",
