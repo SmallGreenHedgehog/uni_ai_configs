@@ -62,7 +62,8 @@ def codex_agents_have_prompt(workspace: Path, codex_config_file_client) -> None:
 
 
 @then(
-    "для каждой роли поле prompt содержит определение роли, условия применения и пользовательские инструкции, разделённые пустыми строками"
+    "для каждой роли поле prompt содержит определение роли, условия применения и пользовательские инструкции, "
+    "разделённые пустыми строками"
 )
 def codex_prompt_combines_sections(workspace: Path, codex_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()

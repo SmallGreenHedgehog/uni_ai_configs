@@ -42,7 +42,8 @@ def claude_agents_have_metadata(workspace: Path, claude_agent_config_file_client
 
 
 @then(
-    "для каждой роли тело файла агента содержит определение роли, условия применения и пользовательские инструкции, разделённые пустыми строками"
+    "для каждой роли тело файла агента содержит определение роли, условия применения и "
+    "пользовательские инструкции, разделённые пустыми строками"
 )
 def claude_agents_have_body(workspace: Path, claude_agent_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
