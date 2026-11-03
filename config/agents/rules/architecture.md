@@ -40,6 +40,12 @@ Dependency rules:
 Package exports:
 - In __init__.py, re-export nested classes only when they are used outside the package
 
+Utilities:
+- src/utils - utilities used by the package itself
+- tests/utils - test-only utilities, imported from the tests package
+- shared utilities used by both the package and tests live in src/utils; tests import them as part of the package
+- do not place test-only utilities in src; promote a utility to src/utils only when the application needs it
+
 When adding new directories and modules, follow DDD and Robert Martin's clean architecture best practices, adapted to this project.
 
 Documentation:
