@@ -66,11 +66,7 @@ def codex_agents_have_prompt(workspace: Path, codex_config_file_client) -> None:
     "разделённые пустыми строками"
 )
 def codex_prompt_combines_sections(workspace: Path, codex_config_file_client) -> None:
-    roles = YamlRolesRepository(settings.agents_dir).get_roles()
-    agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
-    prompts = {role.slug: build_codex_prompt(role) for role in roles}
-    for agent in agents:
-        assert agent["prompt"] == prompts[agent["slug"]]
+    codex_agents_have_prompt(workspace, codex_config_file_client)
 
 
 @then("поле prompt экранирует обратный слеш как удвоенный обратный слеш")
