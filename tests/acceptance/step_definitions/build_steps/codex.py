@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from pytest_bdd import given, then, when
+from pytest_bdd import given, parsers, then, when
 
 from infrastructure.repositories import MarkdownRulesRepository, YamlRolesRepository
 from infrastructure.settings import settings
@@ -34,14 +34,14 @@ def build_codex_executed(build_client, scenario_state: ScenarioState) -> None:
     scenario_state.command_output = build_client.run()
 
 
-@then("файл содержит одну секцию agents.<slug> для каждой роли из roles.yaml")
+@then(parsers.re(r"файл содержит одну секцию agents\.<slug> для каждой роли из roles\.yaml"))
 def codex_has_section_per_role(workspace: Path, codex_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
     assert [agent["slug"] for agent in agents] == [role.slug for role in roles]
 
 
-@then("каждая секция agents.<slug> содержит соответствующее поле description")
+@then(parsers.re(r"каждая секция agents\.<slug> содержит соответствующее поле description"))
 def codex_agents_have_description(workspace: Path, codex_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
@@ -52,7 +52,7 @@ def codex_agents_have_description(workspace: Path, codex_config_file_client) -> 
         assert agent["description"] == expected
 
 
-@then("каждая секция agents.<slug> содержит соответствующее поле prompt")
+@then(parsers.re(r"каждая секция agents\.<slug> содержит соответствующее поле prompt"))
 def codex_agents_have_prompt(workspace: Path, codex_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     agents = codex_config_file_client.read(workspace / ".codex" / "config.toml")
