@@ -1,13 +1,10 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Generic, TypeVar
 
 import yaml
 
-T = TypeVar("T")
 
-
-class FileClient(ABC, Generic[T]):
+class FileClient[T](ABC):
     def read(self, path: Path) -> T:
         content = path.read_text(encoding="utf-8")
         result = self._load_content(content)
@@ -85,4 +82,32 @@ class CodexConfigFileClient(FileClient[list[dict]]):
             sections.append(f'prompt = """{agent["prompt"]}"""')
             sections.append("")
         content = "\n".join(sections) + "\n"
+        return content
+
+
+class ClaudeAgentConfigFileClient(FileClient[dict]):
+    def _load_content(self, content: str) -> dict:
+        frontmatter, body = self.__split_document(content)
+        metadata = yaml.safe_load(frontmatter)
+        agent = {
+            "name": metadata["name"],
+            "description": metadata["description"],
+            "body": body,
+        }
+        return agent
+
+    @staticmethod
+    def __split_document(content: str) -> tuple[str, str]:
+        parts = content.split("---", 2)
+        frontmatter = parts[1].strip("\n")
+        body = parts[2].strip("\n")
+        return frontmatter, body
+
+    def _dump_content(self, data: dict) -> str:
+        frontmatter = yaml.safe_dump(
+            {"name": data["name"], "description": data["description"]},
+            sort_keys=False,
+            allow_unicode=True,
+        )
+        content = f"---\n{frontmatter}---\n\n{data['body']}\n"
         return content

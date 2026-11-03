@@ -2,6 +2,7 @@ import pytest
 
 from tests.acceptance.support.clients import (
     BuildClient,
+    ClaudeAgentConfigFileClient,
     CodexConfigFileClient,
     IgnoreFileClient,
     InitClient,
@@ -25,6 +26,12 @@ def init_client() -> InitClient:
 @pytest.fixture
 def codex_config_file_client() -> CodexConfigFileClient:
     client = CodexConfigFileClient()
+    return client
+
+
+@pytest.fixture
+def claude_agent_config_file_client() -> ClaudeAgentConfigFileClient:
+    client = ClaudeAgentConfigFileClient()
     return client
 
 
