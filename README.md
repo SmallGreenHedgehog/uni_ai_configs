@@ -95,7 +95,7 @@
 
 - Zoo Code: [`.roomodes`](src/application/builders/zoocode_builder.py:18), [`.roo/rules/`](src/application/builders/zoocode_builder.py:46), [`.rooignore`](src/application/builders/zoocode_builder.py:53)
 - Codex: [`AGENTS.md`](src/application/builders/codex_builder.py:43), [`.codex/config.toml`](src/application/builders/codex_builder.py:18), [`.codexignore`](src/application/builders/codex_builder.py:47)
-- Claude Agent: [`.claude/agents/`](src/application/builders/claude_agent_builder.py:14), [`.claude/rules/`](src/application/builders/claude_agent_builder.py:34), [`.claudeignore`](src/application/builders/claude_agent_builder.py:41)
+- Claude Agent: [`.claude/agents/`](src/application/builders/claude_agent_builder.py:13), [`.claude/rules/`](src/application/builders/claude_agent_builder.py:39), [`.claudeignore`](src/application/builders/claude_agent_builder.py:45)
 
 Сгенерированные файлы исключены из Git и не редактируются вручную.
 
