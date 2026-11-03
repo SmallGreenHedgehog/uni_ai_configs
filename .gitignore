@@ -29,6 +29,8 @@ env.*
 /AGENTS.md
 /.codex/
 /.codexignore
+/.claude/
+/.claudeignore
 
 # Nuitka build artifacts
 /build/
