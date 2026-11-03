@@ -1,5 +1,6 @@
 from tests.acceptance.support.expectations.claude import (
     build_claude_agent_body,
+    build_claude_agent_name,
     extract_claude_description,
 )
 from tests.acceptance.support.expectations.codex import build_codex_prompt
@@ -10,6 +11,7 @@ from tests.acceptance.support.expectations.roomodes import (
 
 __all__ = [
     "build_claude_agent_body",
+    "build_claude_agent_name",
     "build_codex_prompt",
     "extract_claude_description",
     "extract_roomodes_description",

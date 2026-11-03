@@ -6,7 +6,10 @@ from pytest_bdd import given, then, when
 from infrastructure.repositories import MarkdownRulesRepository, YamlRolesRepository
 from infrastructure.settings import settings
 from tests.acceptance.support.context import ScenarioState
-from tests.acceptance.support.expectations import build_claude_agent_body
+from tests.acceptance.support.expectations import (
+    build_claude_agent_body,
+    build_claude_agent_name,
+)
 
 
 @given("сборщик настроен на Claude Agent")
@@ -28,16 +31,26 @@ def build_claude_agent_executed(build_client, scenario_state: ScenarioState) -> 
 @then("каталог содержит один файл агента для каждой роли из roles.yaml")
 def claude_agents_have_file_per_role(workspace: Path) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
-    generated_slugs = {path.stem for path in (workspace / ".claude" / "agents").glob("*.md")}
-    assert generated_slugs == {role.slug for role in roles}
+    generated_names = {path.stem for path in (workspace / ".claude" / "agents").glob("*.md")}
+    expected_names = {build_claude_agent_name(role, index) for index, role in enumerate(roles, start=1)}
+    assert generated_names == expected_names
+
+
+@then("файлы агентов пронумерованы в том же порядке, что и роли из roles.yaml")
+def claude_agents_follow_role_order(workspace: Path) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    generated_names = sorted(path.stem for path in (workspace / ".claude" / "agents").glob("*.md"))
+    expected_names = [build_claude_agent_name(role, index) for index, role in enumerate(roles, start=1)]
+    assert generated_names == expected_names
 
 
 @then("каждый файл агента содержит соответствующие поля name и description")
 def claude_agents_have_metadata(workspace: Path, claude_agent_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
-    for role in roles:
-        agent = claude_agent_config_file_client.read(workspace / ".claude" / "agents" / f"{role.slug}.md")
-        assert agent["name"] == role.slug
+    for index, role in enumerate(roles, start=1):
+        agent_name = build_claude_agent_name(role, index)
+        agent = claude_agent_config_file_client.read(workspace / ".claude" / "agents" / f"{agent_name}.md")
+        assert agent["name"] == agent_name
         assert agent["description"] == role.description
 
 
@@ -47,8 +60,9 @@ def claude_agents_have_metadata(workspace: Path, claude_agent_config_file_client
 )
 def claude_agents_have_body(workspace: Path, claude_agent_config_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
-    for role in roles:
-        agent = claude_agent_config_file_client.read(workspace / ".claude" / "agents" / f"{role.slug}.md")
+    for index, role in enumerate(roles, start=1):
+        agent_name = build_claude_agent_name(role, index)
+        agent = claude_agent_config_file_client.read(workspace / ".claude" / "agents" / f"{agent_name}.md")
         assert agent["body"] == build_claude_agent_body(role)
 
 
