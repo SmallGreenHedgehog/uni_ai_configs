@@ -1,13 +1,10 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Generic, TypeVar
 
 import yaml
 
-T = TypeVar("T")
 
-
-class FileClient(ABC, Generic[T]):
+class FileClient[T](ABC):
     def read(self, path: Path) -> T:
         content = path.read_text(encoding="utf-8")
         result = self._load_content(content)
