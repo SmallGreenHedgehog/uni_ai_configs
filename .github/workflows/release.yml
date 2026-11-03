@@ -54,3 +54,22 @@ jobs:
           name: uni-ai.bin
           path: dist/uni-ai.bin
           if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: uni-ai.bin
+          path: dist
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/uni-ai.bin
+          generate_release_notes: true
