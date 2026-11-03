@@ -23,15 +23,15 @@ env.*
 .DS_Store
 
 # Generated tool-specific agent configs
-.roomodes
-.roo/
-.rooignore
-AGENTS.md
-.codex/
-.codexignore
+/.roomodes
+/.roo/
+/.rooignore
+/AGENTS.md
+/.codex/
+/.codexignore
 
 # Nuitka build artifacts
-build/
-dist/
-*.build/
-*.dist/
+/build/
+/dist/
+/*.build/
+/*.dist/
