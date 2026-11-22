@@ -54,22 +54,26 @@
 
 5. OpenHands
 
+Сборщик OpenHands создаёт общие правила для репозитория, навык для каждой роли и хук pre_tool_use, который запрещает инструментам доступ к игнорируемым путям.
+
 Создаваемые файлы:
 
-- [`AGENTS.md`](src/application/builders/openhands_builder.py:121) - правила, объединённые в один файл
-- [`.openhands/skills/`](src/application/builders/openhands_builder.py:100) - по одному файлу навыка на роль
-- [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:126) - объявление хука pre_tool_use
-- [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_builder.py:18) - скрипт блокировки доступа к игнорируемым путям
+- [`AGENTS.md`](src/application/builders/openhands_builder.py:43) - правила, объединённые в один файл
+- [`.agents/skills/`](src/application/builders/openhands_builder.py:19) - навык для каждой роли
+- [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:48) - настройка хука pre_tool_use
+- [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_hook_script.py:4) - скрипт хука, запрещающий доступ к игнорируемым путям
 
 | Элемент конфигурации | Файл результата |
 |---|---|
-| роли | [`.openhands/skills/`](src/application/builders/openhands_builder.py:100) |
-| правила | [`AGENTS.md`](src/application/builders/openhands_builder.py:121) |
-| ignore-записи | [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:126), [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_builder.py:18) |
+| роли | [`.agents/skills/`](src/application/builders/openhands_builder.py:19) |
+| правила | [`AGENTS.md`](src/application/builders/openhands_builder.py:43) |
+| ignore-записи | [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:48), [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_hook_script.py:4) |
 
-Правила объединяются в [`AGENTS.md`](src/application/builders/openhands_builder.py:121) пустой строкой, в алфавитном порядке имён файлов. Для каждой роли создаётся файл навыка `<slug>.md`. Файл начинается с YAML-метаданных `name` и `triggers` со значением slug роли, а тело объединяет определение роли и пользовательские инструкции, разделённые пустой строкой; условия применения в тело не попадают. Каталог `.openhands/skills` пересоздаётся заново, поэтому устаревшие файлы удаляются.
+Каждая роль превращается в навык OpenHands: каталог `.agents/skills/<slug>/` с файлом `SKILL.md`. Навык - это нативный механизм OpenHands для повторно используемых инструкций, в том числе для отдельной роли. Файл начинается с метаданных `name`, `description` и `triggers`, где `name` и `triggers` равны slug роли. Тело навыка объединяет определение роли и пользовательские инструкции, разделённые пустой строкой; условия применения в тело не попадают. Каталог `.agents/skills` пересоздаётся заново, поэтому устаревшие навыки удаляются.
 
-Файл [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:126) объявляет хук `pre_tool_use` с matcher `*`, который запускает [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_builder.py:18) перед каждым вызовом инструмента. Скрипт не зависит от пакета и использует только стандартную библиотеку Python. Шаблоны из файла ignore записываются в скрипт при сборке. Если аргумент инструмента совпадает с шаблоном, скрипт завершается с кодом 2 и выводит сообщение о запрете; иначе завершается с кодом 0. Отрицание `!шаблон` возвращает доступ.
+Правила объединяются в [`AGENTS.md`](src/application/builders/openhands_builder.py:43) пустой строкой, в алфавитном порядке имён файлов.
+
+Хук pre_tool_use - это скрипт, который OpenHands запускает перед каждым вызовом инструмента. Файл [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:48) объявляет хук с matcher `*` и командой запуска [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_hook_script.py:4). Скрипт не зависит от пакета и использует только стандартную библиотеку Python. Шаблоны из файла ignore записываются в скрипт при сборке. Если переданный инструменту путь совпадает с шаблоном, скрипт останавливает вызов с кодом 2 и сообщением о запрете; иначе вызов выполняется.
 
 6. Общие правила
 

@@ -96,7 +96,7 @@
 - Zoo Code: [`.roomodes`](src/application/builders/zoocode_builder.py:18), [`.roo/rules/`](src/application/builders/zoocode_builder.py:46), [`.rooignore`](src/application/builders/zoocode_builder.py:53)
 - Codex: [`AGENTS.md`](src/application/builders/codex_builder.py:43), [`.codex/config.toml`](src/application/builders/codex_builder.py:18), [`.codexignore`](src/application/builders/codex_builder.py:47)
 - Claude Agent: [`.claude/agents/`](src/application/builders/claude_agent_builder.py:13), [`.claude/rules/`](src/application/builders/claude_agent_builder.py:39), [`.claudeignore`](src/application/builders/claude_agent_builder.py:45)
-- OpenHands: [`AGENTS.md`](src/application/builders/openhands_builder.py:121), [`.openhands/skills/`](src/application/builders/openhands_builder.py:100), [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:126), [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_builder.py:18)
+- OpenHands: [`AGENTS.md`](src/application/builders/openhands_builder.py:43), [`.agents/skills/`](src/application/builders/openhands_builder.py:19), [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:48), [`.openhands/hooks/block_ignored.py`](src/application/builders/openhands_hook_script.py:4)
 
 Сгенерированные файлы исключены из Git и не редактируются вручную.
 

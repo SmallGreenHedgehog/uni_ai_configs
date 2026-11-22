@@ -18,6 +18,7 @@ def set_openhands_builder() -> None:
 @given("сгенерированные файлы конфигурации OpenHands отсутствуют")
 def openhands_outputs_absent(workspace: Path) -> None:
     shutil.rmtree(workspace / ".openhands", ignore_errors=True)
+    shutil.rmtree(workspace / ".agents", ignore_errors=True)
     (workspace / "AGENTS.md").unlink(missing_ok=True)
 
 
@@ -27,9 +28,9 @@ def ignore_entries_with_negation(ignore_file_client) -> None:
     ignore_file_client.write(settings.agents_dir / "ignore", patterns)
 
 
-@given("в каталоге .openhands/skills существует устаревший файл stale.md")
+@given("в каталоге .agents/skills существует устаревший навык stale")
 def stale_skill_exists(workspace: Path) -> None:
-    stale_path = workspace / ".openhands" / "skills" / "stale.md"
+    stale_path = workspace / ".agents" / "skills" / "stale" / "SKILL.md"
     stale_path.parent.mkdir(parents=True, exist_ok=True)
     stale_path.write_text("stale", encoding="utf-8")
 
@@ -77,39 +78,47 @@ def hook_does_not_report_denial(scenario_state: ScenarioState) -> None:
     assert "Access denied" not in scenario_state.hook_output
 
 
-@then("каталог .openhands/skills содержит один файл навыка для каждой роли из roles.yaml")
-def skills_have_file_per_role(workspace: Path) -> None:
+@then("каталог .agents/skills содержит одну папку навыка для каждой роли из roles.yaml")
+def skills_have_dir_per_role(workspace: Path) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
-    generated_names = {path.stem for path in (workspace / ".openhands" / "skills").glob("*.md")}
+    generated_names = {path.name for path in (workspace / ".agents" / "skills").iterdir() if path.is_dir()}
     expected_names = {role.slug for role in roles}
     assert generated_names == expected_names
 
 
-@then("каждый файл навыка содержит name и triggers, равные slug роли из roles.yaml")
-def skills_have_metadata(workspace: Path, openhands_skill_file_client) -> None:
+@then("каждый навык содержит name и triggers, равные slug роли из roles.yaml")
+def skills_have_identity_metadata(workspace: Path, openhands_skill_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     for role in roles:
-        skill = openhands_skill_file_client.read(workspace / ".openhands" / "skills" / f"{role.slug}.md")
+        skill = openhands_skill_file_client.read(workspace / ".agents" / "skills" / role.slug / "SKILL.md")
         assert skill["name"] == role.slug
         assert skill["triggers"] == [role.slug]
 
 
+@then("каждый навык содержит description роли из roles.yaml")
+def skills_have_description(workspace: Path, openhands_skill_file_client) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    for role in roles:
+        skill = openhands_skill_file_client.read(workspace / ".agents" / "skills" / role.slug / "SKILL.md")
+        assert skill["description"] == role.description
+
+
 @then(
-    "для каждой роли тело файла навыка содержит определение роли и пользовательские инструкции, "
+    "для каждой роли тело навыка содержит определение роли и пользовательские инструкции, "
     "разделённые пустой строкой"
 )
 def skills_have_body(workspace: Path, openhands_skill_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     for role in roles:
-        skill = openhands_skill_file_client.read(workspace / ".openhands" / "skills" / f"{role.slug}.md")
+        skill = openhands_skill_file_client.read(workspace / ".agents" / "skills" / role.slug / "SKILL.md")
         assert skill["body"] == build_openhands_skill_body(role)
 
 
-@then("тело файла навыка не содержит условия применения")
+@then("тело навыка не содержит условия применения")
 def skills_body_omits_when_to_use(workspace: Path, openhands_skill_file_client) -> None:
     roles = YamlRolesRepository(settings.agents_dir).get_roles()
     for role in roles:
-        skill = openhands_skill_file_client.read(workspace / ".openhands" / "skills" / f"{role.slug}.md")
+        skill = openhands_skill_file_client.read(workspace / ".agents" / "skills" / role.slug / "SKILL.md")
         assert role.when_to_use not in skill["body"]
 
 
@@ -118,10 +127,10 @@ def file_does_not_exist(workspace: Path, path: str) -> None:
     assert not (workspace / path).exists()
 
 
-@then('hooks.json объявляет событие pre_tool_use с matcher "*" и командой запуска block_ignored.py')
+@then('hooks.json объявляет хук pre_tool_use с matcher "*" и командой запуска block_ignored.py')
 def hooks_config_declares_pre_tool_use(workspace: Path, json_file_client) -> None:
     data = json_file_client.read(workspace / ".openhands" / "hooks.json")
-    entries = data["hooks"]["pre_tool_use"]
+    entries = data["pre_tool_use"]
     assert entries[0]["matcher"] == "*"
     command = entries[0]["hooks"][0]["command"]
     assert "block_ignored.py" in command

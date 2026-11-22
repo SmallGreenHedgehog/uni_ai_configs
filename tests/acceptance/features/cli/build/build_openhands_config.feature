@@ -1,8 +1,8 @@
 Feature: Сборка конфигурации OpenHands
 
   Команда build-uni-ai с выбранным OpenHands-сборщиком преобразует единый источник
-  истины агентной конфигурации в нативные файлы OpenHands: AGENTS.md,
-  .openhands/skills/ и .openhands/hooks/.
+  истины агентной конфигурации в нативные файлы OpenHands: AGENTS.md, навыки ролей
+  в .agents/skills/ и хук pre_tool_use в .openhands/hooks.json.
 
   Background:
     Given сборщик настроен на OpenHands
@@ -15,30 +15,31 @@ Feature: Сборка конфигурации OpenHands
     And файл содержит все содержимые правила, объединённые пустой строкой, с завершающим переводом строки
     And содержимое правил в AGENTS.md идёт в алфавитном порядке имён исходных файлов
 
-  Scenario: Сборка создаёт каталог навыков OpenHands
+  Scenario: Сборка создаёт по навыку на каждую роль
     When сборка конфигурации OpenHands выполнена
-    Then каталог существует по пути .openhands/skills
-    And каталог .openhands/skills содержит один файл навыка для каждой роли из roles.yaml
+    Then каталог существует по пути .agents/skills
+    And каталог .agents/skills содержит одну папку навыка для каждой роли из roles.yaml
 
-  Scenario: Навыки OpenHands содержат метаданные роли
+  Scenario: Навык роли содержит метаданные роли
     When сборка конфигурации OpenHands выполнена
-    Then каждый файл навыка содержит name и triggers, равные slug роли из roles.yaml
+    Then каждый навык содержит name и triggers, равные slug роли из roles.yaml
+    And каждый навык содержит description роли из roles.yaml
 
-  Scenario: Тело навыка OpenHands объединяет определение роли и пользовательские инструкции
+  Scenario: Тело навыка объединяет определение роли и пользовательские инструкции
     When сборка конфигурации OpenHands выполнена
-    Then для каждой роли тело файла навыка содержит определение роли и пользовательские инструкции, разделённые пустой строкой
-    And тело файла навыка не содержит условия применения
+    Then для каждой роли тело навыка содержит определение роли и пользовательские инструкции, разделённые пустой строкой
+    And тело навыка не содержит условия применения
 
-  Scenario: Повторная сборка удаляет устаревшие файлы навыков
-    Given в каталоге .openhands/skills существует устаревший файл stale.md
+  Scenario: Повторная сборка удаляет устаревшие навыки
+    Given в каталоге .agents/skills существует устаревший навык stale
     When сборка конфигурации OpenHands выполнена
-    Then файл не существует по пути .openhands/skills/stale.md
-    And каталог .openhands/skills содержит один файл навыка для каждой роли из roles.yaml
+    Then файл не существует по пути .agents/skills/stale/SKILL.md
+    And каталог .agents/skills содержит одну папку навыка для каждой роли из roles.yaml
 
   Scenario: Сборка создаёт конфигурацию хука pre_tool_use
     When сборка конфигурации OpenHands выполнена
     Then файл существует по пути .openhands/hooks.json
-    And hooks.json объявляет событие pre_tool_use с matcher "*" и командой запуска block_ignored.py
+    And hooks.json объявляет хук pre_tool_use с matcher "*" и командой запуска block_ignored.py
 
   Scenario: Скрипт хука существует и исполняем
     When сборка конфигурации OpenHands выполнена

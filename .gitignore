@@ -32,6 +32,7 @@ env.*
 /.claude/
 /.claudeignore
 /.openhands/
+/.agents/
 
 # Nuitka build artifacts
 /build/

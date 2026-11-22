@@ -120,6 +120,7 @@ class OpenHandsSkillFileClient(FileClient[dict]):
         metadata = yaml.safe_load(frontmatter)
         skill = {
             "name": metadata["name"],
+            "description": metadata["description"],
             "triggers": metadata["triggers"],
             "body": body,
         }
@@ -134,7 +135,11 @@ class OpenHandsSkillFileClient(FileClient[dict]):
 
     def _dump_content(self, data: dict) -> str:
         frontmatter = yaml.safe_dump(
-            {"name": data["name"], "triggers": data["triggers"]},
+            {
+                "name": data["name"],
+                "description": data["description"],
+                "triggers": data["triggers"],
+            },
             sort_keys=False,
             allow_unicode=True,
         )
