@@ -56,3 +56,27 @@ select = [
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
+
+[tool.pylint.main]
+load-plugins = [
+    "pylint.extensions.no_self_use",
+    "lint.code_style.redundant_public_method_checker",
+    "lint.code_style.underscore_function_checker",
+    "lint.code_style.method_order_checker",
+    "lint.code_style.single_return_checker",
+    "lint.architecture.layer_dependency_checker",
+]
+source-roots = ["."]
+init-hook = 'import sys; sys.path.insert(0, "."); sys.path.insert(0, "src")'
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint."messages control"]
+disable = [
+    "line-too-long", # C0301 - Ruff handles it
+    "missing-module-docstring", # C0114
+    "missing-class-docstring", # C0115
+    "missing-function-docstring", # C0116
+    "too-few-public-methods", # R0903
+]
