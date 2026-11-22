@@ -28,6 +28,7 @@
 - Codex
 - ZooCode
 - ClaudeAgent
+- OpenHands
 
 Пример:
 

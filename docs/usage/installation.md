@@ -30,7 +30,7 @@
 | Переменная | Назначение | По умолчанию | Допустимые значения |
 |---|---|---|---|
 | [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) | путь к каталогу с исходными конфигами | [`config/agents`](config/agents) | относительный или абсолютный путь |
-| [`UNI_BUILDER`](src/infrastructure/settings.py:23) | сборщик конфигурации | ZooCode | Codex, ZooCode, ClaudeAgent |
+| [`UNI_BUILDER`](src/infrastructure/settings.py:23) | сборщик конфигурации | ZooCode | Codex, ZooCode, ClaudeAgent, OpenHands |
 
 Относительный путь [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) разрешается от корня проекта, в котором выполняется команда. Допускается абсолютный путь.
 
