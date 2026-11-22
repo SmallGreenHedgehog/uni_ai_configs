@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import application.builders as builders
+from application import builders
 from application.builders.base_config_builder import BaseConfigBuilder
 from application.interfaces.repositories import (
     IgnoreRepository,

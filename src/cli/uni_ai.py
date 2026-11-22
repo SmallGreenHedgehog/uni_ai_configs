@@ -28,14 +28,6 @@ class UniAiCommand:
         return commands
 
     @staticmethod
-    def __is_command(candidate: type) -> bool:
-        is_base_subclass = issubclass(candidate, BaseCommand)
-        is_concrete = not inspect.isabstract(candidate)
-        is_not_base = candidate is not BaseCommand
-        result = is_base_subclass and is_concrete and is_not_base
-        return result
-
-    @staticmethod
     def __create_parser(commands: list[BaseCommand]) -> ArgumentParser:
         parser = ArgumentParser(
             prog="uni-ai",
@@ -46,6 +38,14 @@ class UniAiCommand:
             subparser = subparsers.add_parser(command.name, help=command.help_text)
             subparser.set_defaults(command=command)
         return parser
+
+    @staticmethod
+    def __is_command(candidate: type) -> bool:
+        is_base_subclass = issubclass(candidate, BaseCommand)
+        is_concrete = not inspect.isabstract(candidate)
+        is_not_base = candidate is not BaseCommand
+        result = is_base_subclass and is_concrete and is_not_base
+        return result
 
 
 if __name__ == "__main__":
