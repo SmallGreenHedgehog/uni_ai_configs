@@ -20,6 +20,8 @@ dev = [
     "pytest>=9.1",
     "pytest-bdd>=9.0",
     "polyfactory>=2.16",
+    "pylint>=3.0",
+    "ruff>=0.17",
 ]
 nuitka = [
     "nuitka>=2.6",
