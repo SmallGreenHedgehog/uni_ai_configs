@@ -4,9 +4,12 @@ from tests.acceptance.support.clients import (
     BuildClient,
     ClaudeAgentConfigFileClient,
     CodexConfigFileClient,
+    HookScriptClient,
     IgnoreFileClient,
     InitClient,
+    JsonFileClient,
     MarkdownFileClient,
+    OpenHandsSkillFileClient,
     YamlFileClient,
 )
 
@@ -50,4 +53,22 @@ def markdown_file_client() -> MarkdownFileClient:
 @pytest.fixture
 def ignore_file_client() -> IgnoreFileClient:
     client = IgnoreFileClient()
+    return client
+
+
+@pytest.fixture
+def openhands_skill_file_client() -> OpenHandsSkillFileClient:
+    client = OpenHandsSkillFileClient()
+    return client
+
+
+@pytest.fixture
+def json_file_client() -> JsonFileClient:
+    client = JsonFileClient()
+    return client
+
+
+@pytest.fixture
+def hook_script_client() -> HookScriptClient:
+    client = HookScriptClient()
     return client
