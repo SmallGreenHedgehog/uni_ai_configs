@@ -18,7 +18,7 @@ class Settings(BaseSettings):
         validation_alias="UNI_AGENTS_PATH",
     )
 
-    builder: Literal["Codex", "ZooCode", "ClaudeAgent"] = Field(
+    builder: Literal["Codex", "ZooCode", "ClaudeAgent", "OpenHands"] = Field(
         default="ZooCode",
         validation_alias="UNI_BUILDER",
     )
