@@ -7,6 +7,8 @@ from utils.yaml.values import quote_value_if_needed
 
 
 class OpenHandsBuilder(BaseConfigBuilder):
+    __full_permission_tool_names = ("terminal", "file_editor", "task_tracker")
+
     @property
     def _success_message(self) -> str:
         message = "Built OpenHands config: .openhands/agents/, AGENTS.md, .openhands/hooks.json"
@@ -21,10 +23,13 @@ class OpenHandsBuilder(BaseConfigBuilder):
 
     @staticmethod
     def __render_agent(role: Role) -> str:
+        tool_lines = [f"  - {tool_name}" for tool_name in OpenHandsBuilder.__full_permission_tool_names]
         frontmatter = [
             "---",
             f"name: {role.slug}",
             f"description: {quote_value_if_needed(role.description)}",
+            "tools:",
+            *tool_lines,
             "---",
             "",
         ]

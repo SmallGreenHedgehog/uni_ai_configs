@@ -24,6 +24,18 @@ Feature: Сборка конфигурации OpenHands
     And значение поля name каждого субагента OpenHands соответствует slug роли
     And значение поля description каждого субагента OpenHands соответствует описанию роли
 
+  Scenario: Frontmatter каждого субагента OpenHands содержит поле tools
+    When сборка конфигурации OpenHands выполнена
+    Then каждый файл субагента OpenHands содержит frontmatter с полем tools
+
+  Scenario: Субагенты OpenHands объявляют ровно внутренние имена инструментов terminal, file_editor и task_tracker
+    When сборка конфигурации OpenHands выполнена
+    Then каждый файл субагента OpenHands объявляет в поле tools ровно инструменты terminal, file_editor и task_tracker
+
+  Scenario: Поле tools субагентов OpenHands не содержит имён групп ролей
+    When сборка конфигурации OpenHands выполнена
+    Then каждый файл субагента OpenHands не перечисляет в поле tools имена групп ролей read, edit и command
+
   Scenario: Системный промпт субагента OpenHands объединяет определение роли, условия применения и инструкции
     When сборка конфигурации OpenHands выполнена
     Then для каждой роли тело файла субагента OpenHands содержит определение роли, условия применения и пользовательские инструкции, разделённые пустыми строками

@@ -131,6 +131,7 @@ class OpenHandsSubagentFileClient(FileClient[dict]):
         subagent = {
             "name": metadata["name"],
             "description": metadata["description"],
+            "tools": metadata.get("tools"),
             "body": body,
         }
         return subagent
@@ -143,8 +144,12 @@ class OpenHandsSubagentFileClient(FileClient[dict]):
         return frontmatter, body
 
     def _dump_content(self, data: dict) -> str:
+        frontmatter_data = {"name": data["name"], "description": data["description"]}
+        tools = data.get("tools")
+        if tools is not None:
+            frontmatter_data["tools"] = tools
         frontmatter = yaml.safe_dump(
-            {"name": data["name"], "description": data["description"]},
+            frontmatter_data,
             sort_keys=False,
             allow_unicode=True,
         )

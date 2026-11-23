@@ -5,7 +5,9 @@ from tests.acceptance.support.expectations.claude import (
 )
 from tests.acceptance.support.expectations.codex import build_codex_prompt
 from tests.acceptance.support.expectations.openhands import (
+    build_openhands_role_group_names,
     build_openhands_subagent_body,
+    build_openhands_subagent_tools,
     extract_openhands_description,
     extract_openhands_hook_commands,
 )
@@ -18,7 +20,9 @@ __all__ = [
     "build_claude_agent_body",
     "build_claude_agent_name",
     "build_codex_prompt",
+    "build_openhands_role_group_names",
     "build_openhands_subagent_body",
+    "build_openhands_subagent_tools",
     "extract_claude_description",
     "extract_openhands_description",
     "extract_openhands_hook_commands",
