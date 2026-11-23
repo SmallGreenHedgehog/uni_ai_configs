@@ -6,7 +6,9 @@ from tests.acceptance.support.clients import (
     CodexConfigFileClient,
     IgnoreFileClient,
     InitClient,
+    JsonFileClient,
     MarkdownFileClient,
+    OpenHandsSubagentFileClient,
     YamlFileClient,
 )
 
@@ -32,6 +34,18 @@ def codex_config_file_client() -> CodexConfigFileClient:
 @pytest.fixture
 def claude_agent_config_file_client() -> ClaudeAgentConfigFileClient:
     client = ClaudeAgentConfigFileClient()
+    return client
+
+
+@pytest.fixture
+def json_file_client() -> JsonFileClient:
+    client = JsonFileClient()
+    return client
+
+
+@pytest.fixture
+def openhands_subagent_file_client() -> OpenHandsSubagentFileClient:
+    client = OpenHandsSubagentFileClient()
     return client
 
 

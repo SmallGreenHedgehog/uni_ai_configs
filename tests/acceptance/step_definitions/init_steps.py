@@ -30,7 +30,8 @@ def init_executed_again(init_client, scenario_state: ScenarioState) -> None:
 
 
 @then(
-    "в каталоге конфигурации агентов созданы файлы конфигурации roles.yaml, ignore, rules/architecture.md и rules/code-style.md"
+    "в каталоге конфигурации агентов созданы файлы конфигурации "
+    "roles.yaml, ignore, rules/architecture.md и rules/code-style.md"
 )
 def all_init_files_created() -> None:
     for relative_path in INIT_FILES:
