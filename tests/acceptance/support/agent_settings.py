@@ -4,6 +4,7 @@ from pathlib import Path
 from tests.acceptance.support.clients import CodexConfigFileClient
 from tests.acceptance.support.expectations import (
     extract_claude_description,
+    extract_openhands_description,
     extract_roomodes_description,
 )
 from tests.utils.reflection import get_subclass_by_name
@@ -63,6 +64,18 @@ class ClaudeAgentBuildSettings(AgentBuildSettings):
     def rules_dir(self, workspace: Path) -> Path:
         rules_dir = workspace / ".claude" / "rules"
         return rules_dir
+
+
+class OpenHandsBuildSettings(AgentBuildSettings):
+    def rendered_description(self, workspace: Path) -> str:
+        agent_path = next((workspace / ".openhands" / "agents").glob("*.md"))
+        content = agent_path.read_text(encoding="utf-8")
+        rendered = extract_openhands_description(content)
+        return rendered
+
+    def ignore_file_path(self, workspace: Path) -> Path:
+        path = workspace / ".openhands" / "hooks.json"
+        return path
 
 
 def get_agent_settings(builder: str) -> AgentBuildSettings:
