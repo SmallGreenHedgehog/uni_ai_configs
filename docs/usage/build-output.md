@@ -52,6 +52,26 @@
 
 Для каждой роли создаётся отдельный Markdown-файл с именем `{index}-{slug}.md`, где `index` - номер роли в [`roles.yaml`](config/agents/roles.yaml) начиная с 1, дополненный нулём до двух знаков. Метаданное `name` совпадает с именем файла без расширения, поэтому список агентов в Claude Agent отображается в порядке ролей из [`roles.yaml`](config/agents/roles.yaml). Файл содержит метаданные `name` и `description`, а также тело, объединяющее определение роли, условия применения и инструкции, разделённые пустыми строками. Каталог `.claude/rules` пересоздаётся заново и содержит только файлы правил из исходной конфигурации.
 
-5. Общие правила
+5. OpenHands
+
+Создаваемые файлы:
+
+- [`.openhands/agents/`](src/application/builders/openhands_builder.py:16) - субагенты, по одному Markdown-файлу на роль
+- [`AGENTS.md`](src/application/builders/openhands_builder.py:38) - правила, объединённые в один файл
+- [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:55) - hook, запрещающий операции с ignore-путями
+
+| Элемент конфигурации | Файл результата |
+|---|---|
+| роли | [`.openhands/agents/`](src/application/builders/openhands_builder.py:16) |
+| правила | [`AGENTS.md`](src/application/builders/openhands_builder.py:38) |
+| ignore-записи | [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:55) |
+
+Для каждой роли создаётся отдельный Markdown-файл с именем `{slug}.md` и YAML frontmatter с полями `name` и `description`. Тело файла становится системным промптом субагента и объединяет определение роли, условия применения и пользовательские инструкции, разделённые пустыми строками.
+
+Правила объединяются в [`AGENTS.md`](src/application/builders/openhands_builder.py:38) пустой строкой, в алфавитном порядке имён файлов. OpenHands читает этот файл как постоянно действующие инструкции репозитория.
+
+Ignore-записи попадают в [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:55): файл содержит hook `pre_tool_use`, который запрещает операции с игнорируемыми путями.
+
+6. Общие правила
 
 Сгенерированные файлы не редактируются вручную и исключены из Git.

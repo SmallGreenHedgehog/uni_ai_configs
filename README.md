@@ -55,7 +55,7 @@
 
 В файле `.env` задаются:
 - [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) - путь к каталогу с исходными конфигами (по умолчанию [`config/agents`](config/agents))
-- [`UNI_BUILDER`](src/infrastructure/settings.py:23) - сборщик: Codex, ZooCode или ClaudeAgent (по умолчанию ZooCode)
+- [`UNI_BUILDER`](src/infrastructure/settings.py:23) - сборщик: Codex, ZooCode, ClaudeAgent или OpenHands (по умолчанию ZooCode)
 
 Через [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) можно указать другой каталог, если стандартный [`config/agents`](config/agents) не подходит. Путь может быть относительным (разрешается от корня проекта, где выполняется команда) или абсолютным.
 
@@ -75,7 +75,7 @@
 
     UNI_BUILDER=ClaudeAgent build-uni-ai
 
-Команда выполняется из корня целевого проекта и собирает конфигурацию для сборщика, заданного в [`UNI_BUILDER`](src/infrastructure/settings.py:23): Codex, ZooCode или ClaudeAgent. По завершении команда выводит сообщение об успешной сборке с перечнем созданных файлов.
+Команда выполняется из корня целевого проекта и собирает конфигурацию для сборщика, заданного в [`UNI_BUILDER`](src/infrastructure/settings.py:23): Codex, ZooCode, ClaudeAgent или OpenHands. По завершении команда выводит сообщение об успешной сборке с перечнем созданных файлов.
 
 4.7. Сборка бинарника (Nuitka)
 
@@ -96,6 +96,7 @@
 - Zoo Code: [`.roomodes`](src/application/builders/zoocode_builder.py:18), [`.roo/rules/`](src/application/builders/zoocode_builder.py:46), [`.rooignore`](src/application/builders/zoocode_builder.py:53)
 - Codex: [`AGENTS.md`](src/application/builders/codex_builder.py:43), [`.codex/config.toml`](src/application/builders/codex_builder.py:18), [`.codexignore`](src/application/builders/codex_builder.py:47)
 - Claude Agent: [`.claude/agents/`](src/application/builders/claude_agent_builder.py:13), [`.claude/rules/`](src/application/builders/claude_agent_builder.py:39), [`.claudeignore`](src/application/builders/claude_agent_builder.py:45)
+- OpenHands: [`.openhands/agents/`](src/application/builders/openhands_builder.py:16), [`AGENTS.md`](src/application/builders/openhands_builder.py:38), [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:55)
 
 Сгенерированные файлы исключены из Git и не редактируются вручную.
 
