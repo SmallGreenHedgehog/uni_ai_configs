@@ -6,6 +6,17 @@ def build_openhands_subagent_body(role: Role) -> str:
     return body
 
 
+def build_openhands_subagent_tools() -> list[str]:
+    tools = ["terminal", "file_editor", "task_tracker"]
+    return tools
+
+
+def build_openhands_role_group_names(roles: list[Role]) -> set[str]:
+    group_names = {group for role in roles for group in role.groups}
+    group_names.update({"read", "edit", "command"})
+    return group_names
+
+
 def extract_openhands_description(content: str) -> str:
     description = ""
     for line in content.splitlines():
