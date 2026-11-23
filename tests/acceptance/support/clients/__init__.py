@@ -3,7 +3,9 @@ from tests.acceptance.support.clients.file import (
     ClaudeAgentConfigFileClient,
     CodexConfigFileClient,
     IgnoreFileClient,
+    JsonFileClient,
     MarkdownFileClient,
+    OpenHandsSubagentFileClient,
     YamlFileClient,
 )
 
@@ -13,6 +15,8 @@ __all__ = [
     "ClaudeAgentConfigFileClient",
     "CodexConfigFileClient",
     "IgnoreFileClient",
+    "JsonFileClient",
     "MarkdownFileClient",
+    "OpenHandsSubagentFileClient",
     "YamlFileClient",
 ]

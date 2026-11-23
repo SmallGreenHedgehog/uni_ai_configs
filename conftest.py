@@ -10,6 +10,7 @@ STEP_DEFINITIONS = [
     "tests.acceptance.step_definitions.build_steps.codex",
     "tests.acceptance.step_definitions.build_steps.zoocode",
     "tests.acceptance.step_definitions.build_steps.claude_agent",
+    "tests.acceptance.step_definitions.build_steps.openhands",
     "tests.acceptance.step_definitions.init_steps",
 ]
 

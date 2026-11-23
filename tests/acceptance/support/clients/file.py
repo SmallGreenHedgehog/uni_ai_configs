@@ -1,3 +1,4 @@
+import json
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -95,6 +96,44 @@ class ClaudeAgentConfigFileClient(FileClient[dict]):
             "body": body,
         }
         return agent
+
+    @staticmethod
+    def __split_document(content: str) -> tuple[str, str]:
+        parts = content.split("---", 2)
+        frontmatter = parts[1].strip("\n")
+        body = parts[2].strip("\n")
+        return frontmatter, body
+
+    def _dump_content(self, data: dict) -> str:
+        frontmatter = yaml.safe_dump(
+            {"name": data["name"], "description": data["description"]},
+            sort_keys=False,
+            allow_unicode=True,
+        )
+        content = f"---\n{frontmatter}---\n\n{data['body']}\n"
+        return content
+
+
+class JsonFileClient(FileClient[dict]):
+    def _load_content(self, content: str) -> dict:
+        data = json.loads(content)
+        return data
+
+    def _dump_content(self, data: dict) -> str:
+        content = json.dumps(data, indent=2)
+        return content
+
+
+class OpenHandsSubagentFileClient(FileClient[dict]):
+    def _load_content(self, content: str) -> dict:
+        frontmatter, body = self.__split_document(content)
+        metadata = yaml.safe_load(frontmatter)
+        subagent = {
+            "name": metadata["name"],
+            "description": metadata["description"],
+            "body": body,
+        }
+        return subagent
 
     @staticmethod
     def __split_document(content: str) -> tuple[str, str]:
