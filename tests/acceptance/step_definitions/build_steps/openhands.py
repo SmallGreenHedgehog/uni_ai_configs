@@ -7,7 +7,9 @@ from infrastructure.repositories import TextIgnoreRepository, YamlRolesRepositor
 from infrastructure.settings import settings
 from tests.acceptance.support.context import ScenarioState
 from tests.acceptance.support.expectations import (
+    build_openhands_role_group_names,
     build_openhands_subagent_body,
+    build_openhands_subagent_tools,
     extract_openhands_hook_commands,
 )
 
@@ -52,6 +54,55 @@ def openhands_agents_have_metadata(workspace: Path, openhands_subagent_file_clie
         )
         assert "name" in subagent
         assert "description" in subagent
+
+
+@then("каждый файл субагента OpenHands содержит frontmatter с полем tools")
+def openhands_agents_have_tools(workspace: Path, openhands_subagent_file_client) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    for role in roles:
+        subagent = openhands_subagent_file_client.read(
+            workspace / ".openhands" / "agents" / f"{role.slug}.md"
+        )
+        assert subagent["tools"] is not None, f"{role.slug}: tools field is missing"
+
+
+@then(
+    "каждый файл субагента OpenHands объявляет в поле tools "
+    "ровно инструменты terminal, file_editor и task_tracker"
+)
+def openhands_agents_declare_expected_tools(
+    workspace: Path, openhands_subagent_file_client
+) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    expected_tools = sorted(build_openhands_subagent_tools())
+    for role in roles:
+        subagent = openhands_subagent_file_client.read(
+            workspace / ".openhands" / "agents" / f"{role.slug}.md"
+        )
+        declared_tools = sorted(subagent["tools"] or [])
+        assert declared_tools == expected_tools, (
+            f"{role.slug}: expected exactly {expected_tools}, got {declared_tools}"
+        )
+
+
+@then(
+    "каждый файл субагента OpenHands не перечисляет в поле tools "
+    "имена групп ролей read, edit и command"
+)
+def openhands_agents_exclude_role_group_names(
+    workspace: Path, openhands_subagent_file_client
+) -> None:
+    roles = YamlRolesRepository(settings.agents_dir).get_roles()
+    group_names = build_openhands_role_group_names(roles)
+    for role in roles:
+        subagent = openhands_subagent_file_client.read(
+            workspace / ".openhands" / "agents" / f"{role.slug}.md"
+        )
+        declared_tools = subagent["tools"] or []
+        forbidden_tools = set(declared_tools) & group_names
+        assert not forbidden_tools, (
+            f"{role.slug}: tools must not include role group names, found {sorted(forbidden_tools)}"
+        )
 
 
 @then("значение поля name каждого субагента OpenHands соответствует slug роли")
