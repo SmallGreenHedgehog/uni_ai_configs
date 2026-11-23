@@ -4,4 +4,4 @@
 
 2. Использование при сборке
 
-Шаблоны из файла [`ignore`](config/agents/ignore) попадают в файл игнорирования выбранного инструмента: [`.rooignore`](src/application/builders/zoocode_builder.py:53) для Zoo Code, [`.codexignore`](src/application/builders/codex_builder.py:47) для Codex и [`.claudeignore`](src/application/builders/claude_agent_builder.py:45) для Claude Agent.
+Шаблоны из файла [`ignore`](config/agents/ignore) попадают в файл игнорирования выбранного инструмента: [`.rooignore`](src/application/builders/zoocode_builder.py:53) для Zoo Code, [`.codexignore`](src/application/builders/codex_builder.py:47) для Codex, [`.claudeignore`](src/application/builders/claude_agent_builder.py:45) для Claude Agent и [`.openhands/hooks.json`](src/application/builders/openhands_builder.py:55) для OpenHands, где hook `pre_tool_use` запрещает операции с игнорируемыми путями.
