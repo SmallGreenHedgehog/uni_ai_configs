@@ -25,10 +25,54 @@ jobs:
       - name: Run tests
         run: pytest
 
-  build:
-    name: Build binary
+  build-linux:
+    name: Build Linux x86_64 binary
     runs-on: ubuntu-latest
     needs: tests
+    container: quay.io/pypa/manylinux_2_28_x86_64:latest
+    env:
+      TARGET_PLATFORM: linux-x86_64
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure baseline CPython 3.12
+        run: |
+          PYTHON_BIN="/opt/python/cp312-cp312/bin"
+          echo "${PYTHON_BIN}" >> "$GITHUB_PATH"
+          ln -sf "${PYTHON_BIN}/python3.12" "${PYTHON_BIN}/python3"
+          "${PYTHON_BIN}/python3" --version
+          "${PYTHON_BIN}/python3" -m pip install --upgrade pip
+
+      - name: Install build dependencies
+        run: python3 -m pip install -e ".[nuitka]"
+
+      - name: Build Linux binary
+        run: sh scripts/build_nuitka.sh
+
+      - name: Verify baseline x86-64 in ELF headers
+        run: |
+          if readelf -n dist/uni-ai-linux-x86_64.bin | grep -q "x86-64-v3"; then
+            echo "ERROR: binary requires x86-64-v3"
+            exit 1
+          fi
+
+      - name: Smoke test binary
+        run: ./dist/uni-ai-linux-x86_64.bin --help
+
+      - name: Upload Linux binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: uni-ai-linux-x86_64.bin
+          path: dist/uni-ai-linux-x86_64.bin
+          if-no-files-found: error
+
+  build-macos:
+    name: Build macOS arm64 binary
+    runs-on: macos-14
+    needs: tests
+    env:
+      TARGET_PLATFORM: macos-arm64
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -39,37 +83,47 @@ jobs:
           python-version: "3.12"
           cache: pip
 
-      - name: Install system build dependencies
-        run: sudo apt-get update && sudo apt-get install -y patchelf
-
       - name: Install build dependencies
         run: pip install -e ".[nuitka]"
 
-      - name: Build binary
+      - name: Build macOS binary
         run: sh scripts/build_nuitka.sh
 
-      - name: Upload binary
+      - name: Smoke test binary
+        run: ./dist/uni-ai-macos-arm64.bin --help
+
+      - name: Upload macOS binary
         uses: actions/upload-artifact@v4
         with:
-          name: uni-ai.bin
-          path: dist/uni-ai.bin
+          name: uni-ai-macos-arm64.bin
+          path: dist/uni-ai-macos-arm64.bin
           if-no-files-found: error
 
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - build-linux
+      - build-macos
     permissions:
       contents: write
     steps:
-      - name: Download binary
+      - name: Download Linux binary
         uses: actions/download-artifact@v4
         with:
-          name: uni-ai.bin
+          name: uni-ai-linux-x86_64.bin
+          path: dist
+
+      - name: Download macOS binary
+        uses: actions/download-artifact@v4
+        with:
+          name: uni-ai-macos-arm64.bin
           path: dist
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/uni-ai.bin
+          files: |
+            dist/uni-ai-linux-x86_64.bin
+            dist/uni-ai-macos-arm64.bin
           generate_release_notes: true
