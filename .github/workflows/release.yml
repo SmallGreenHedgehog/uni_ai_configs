@@ -69,7 +69,7 @@ jobs:
 
   build-macos:
     name: Build macOS arm64 binary
-    runs-on: macos-14
+    runs-on: macos-15
     needs: tests
     env:
       TARGET_PLATFORM: macos-arm64
