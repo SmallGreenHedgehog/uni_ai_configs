@@ -32,20 +32,28 @@ jobs:
     container: quay.io/pypa/manylinux_2_28_x86_64:latest
     env:
       TARGET_PLATFORM: linux-x86_64
+      PYTHON_VERSION: 3.12.10
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Configure baseline CPython 3.12
+      - name: Build baseline CPython with shared libpython
         run: |
-          PYTHON_BIN="/opt/python/cp312-cp312/bin"
-          echo "${PYTHON_BIN}" >> "$GITHUB_PATH"
-          ln -sf "${PYTHON_BIN}/python3.12" "${PYTHON_BIN}/python3"
-          "${PYTHON_BIN}/python3" --version
-          "${PYTHON_BIN}/python3" -m pip install --upgrade pip
+          PYTHON_PREFIX="/opt/uni-ai-python"
+          curl -fsSL "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz" | tar -xz
+          cd "Python-${PYTHON_VERSION}"
+          CFLAGS="-march=x86-64 -mtune=generic" \
+          LDFLAGS="-Wl,-rpath,${PYTHON_PREFIX}/lib" \
+            ./configure --prefix="${PYTHON_PREFIX}" --enable-shared --with-ensurepip=install
+          make -j"$(nproc)"
+          make install
+          echo "${PYTHON_PREFIX}/bin" >> "$GITHUB_PATH"
+          "${PYTHON_PREFIX}/bin/python3" --version
 
       - name: Install build dependencies
-        run: python3 -m pip install -e ".[nuitka]"
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -e ".[nuitka]"
 
       - name: Build Linux binary
         run: sh scripts/build_nuitka.sh
