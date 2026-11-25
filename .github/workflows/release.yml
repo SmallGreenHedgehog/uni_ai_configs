@@ -37,6 +37,21 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Install CPython build dependencies
+        run: |
+          yum install -y \
+            openssl-devel \
+            libffi-devel \
+            zlib-devel \
+            bzip2-devel \
+            xz-devel \
+            sqlite-devel \
+            readline-devel \
+            ncurses-devel \
+            gdbm-devel \
+            expat-devel \
+            libuuid-devel
+
       - name: Build baseline CPython with shared libpython
         run: |
           PYTHON_PREFIX="/opt/uni-ai-python"
