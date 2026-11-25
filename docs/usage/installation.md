@@ -41,7 +41,13 @@
     pip install -e ".[nuitka]"
     sh scripts/build_nuitka.sh
 
-Скрипт создаёт один исполняемый файл `dist/uni-ai.bin` с подкомандами init и build:
+Целевая платформа задаётся переменной окружения `TARGET_PLATFORM` (`linux-x86_64` или `macos-arm64`). Если она не задана, платформа определяется автоматически по текущей системе. Имя выходного файла формируется по целевой платформе: `dist/uni-ai-linux-x86_64.bin` для Linux x86_64 и `dist/uni-ai-macos-arm64.bin` для macOS. Имя можно переопределить переменной окружения `OUTPUT_FILENAME`:
 
-    ./dist/uni-ai.bin init
-    ./dist/uni-ai.bin build
+    OUTPUT_FILENAME=uni-ai-custom.bin TARGET_PLATFORM=linux-x86_64 sh scripts/build_nuitka.sh
+
+Для Linux скрипт задаёт `CFLAGS="-march=x86-64 -mtune=generic"` и `CXXFLAGS="-march=x86-64 -mtune=generic"`, поэтому бинарник работает на старых процессорах без AVX2 и без ошибки `CPU ISA level is lower than required`. Для macOS бинарник подписывается ad-hoc (`--macos-sign-identity=-`) и с него снимаются extended attributes (`xattr -c`).
+
+Бинарник содержит подкоманды init и build:
+
+    ./dist/uni-ai-linux-x86_64.bin init
+    ./dist/uni-ai-linux-x86_64.bin build
