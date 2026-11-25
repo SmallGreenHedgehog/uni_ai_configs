@@ -32,6 +32,7 @@ apply_output_filename_override() {
 apply_target_flags() {
     LTO_FLAG=""
     SIGN_FLAG=""
+    LIBPYTHON_FLAG=""
     "apply_target_flags_${OS_KEY}"
 }
 
@@ -46,6 +47,7 @@ build_binary() {
         --enable-plugin=anti-bloat \
         --python-flag=no_docstrings \
         $LTO_FLAG \
+        $LIBPYTHON_FLAG \
         $SIGN_FLAG \
         --include-package=cli \
         --include-package=application \
@@ -64,6 +66,7 @@ resolve_output_filename_linux_x86_64() {
 
 apply_target_flags_linux() {
     LTO_FLAG="--lto=yes"
+    LIBPYTHON_FLAG="--static-libpython=no"
     CFLAGS="-march=x86-64 -mtune=generic"
     CXXFLAGS="-march=x86-64 -mtune=generic"
     export CFLAGS CXXFLAGS
