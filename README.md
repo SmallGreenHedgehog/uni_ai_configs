@@ -84,12 +84,30 @@
     pip install -e ".[nuitka]"
     sh scripts/build_nuitka.sh
 
-Скрипт создаёт один исполняемый файл `dist/uni-ai.bin`. Бинарник содержит обе команды:
+Целевая платформа задаётся переменной окружения `TARGET_PLATFORM` (`linux-x86_64` или `macos-arm64`). Если она не задана, платформа определяется автоматически по текущей системе. Имя выходного файла формируется по целевой платформе:
 
-    ./dist/uni-ai.bin init
-    ./dist/uni-ai.bin build
+- `TARGET_PLATFORM=linux-x86_64` -> `dist/uni-ai-linux-x86_64.bin`
+- `TARGET_PLATFORM=macos-arm64` -> `dist/uni-ai-macos-arm64.bin`
+
+Имя можно переопределить переменной окружения `OUTPUT_FILENAME`:
+
+    OUTPUT_FILENAME=uni-ai-custom.bin TARGET_PLATFORM=linux-x86_64 sh scripts/build_nuitka.sh
+
+Для Linux скрипт задаёт `CFLAGS="-march=x86-64 -mtune=generic"` и `CXXFLAGS="-march=x86-64 -mtune=generic"`, поэтому бинарник работает на старых процессорах без AVX2 и без ошибки `CPU ISA level is lower than required`. Для macOS бинарник подписывается ad-hoc (`--macos-sign-identity=-`) и с него снимаются extended attributes (`xattr -c`).
+
+Бинарник содержит обе команды:
+
+    ./dist/uni-ai-linux-x86_64.bin init
+    ./dist/uni-ai-linux-x86_64.bin build
 
 Подкоманды повторяют поведение [`init-uni-ai`](pyproject.toml:30) и [`build-uni-ai`](pyproject.toml:29).
+
+4.8. Бинарники релиза
+
+На [странице релизов](https://github.com/SmallGreenHedgehog/uni_ai_configs/releases) публикуются два артефакта:
+
+- `uni-ai-linux-x86_64.bin` — универсальный бинарник для Linux x86_64 (Debian, Ubuntu и др.), собранный на базе glibc 2.28 и базового x86-64 без `x86-64-v3`.
+- `uni-ai-macos-arm64.bin` — нативный бинарник для macOS Apple Silicon (M-серия).
 
 5. Результат сборки
 
