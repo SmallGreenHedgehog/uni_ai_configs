@@ -11,6 +11,7 @@
 - [`roles.yaml`](config/agents/roles.yaml) - роли
 - [`ignore`](config/agents/ignore) - ignore-шаблоны
 - [`rules/architecture.md`](config/agents/rules/architecture.md) - заглушка для описания архитектуры проекта
+- [`rules/branches.md`](config/agents/rules/branches.md) - правила создания ветвей и черновиков PR
 - [`rules/code-style.md`](config/agents/rules/code-style.md) - правила оформления кода
 - [`rules/commits.md`](config/agents/rules/commits.md) - правила оформления коммитов
 

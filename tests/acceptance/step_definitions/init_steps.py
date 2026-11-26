@@ -8,7 +8,14 @@ from pytest_bdd import given, parsers, then, when
 from infrastructure.settings import settings
 from tests.acceptance.support.context import ScenarioState
 
-INIT_FILES = ["roles.yaml", "ignore", "rules/architecture.md", "rules/code-style.md", "rules/commits.md"]
+INIT_FILES = [
+    "roles.yaml",
+    "ignore",
+    "rules/architecture.md",
+    "rules/branches.md",
+    "rules/code-style.md",
+    "rules/commits.md",
+]
 
 
 @given("каталог конфигурации агентов не содержит файлов конфигурации")
@@ -31,7 +38,7 @@ def init_executed_again(init_client, scenario_state: ScenarioState) -> None:
 
 @then(
     "в каталоге конфигурации агентов созданы файлы конфигурации "
-    "roles.yaml, ignore, rules/architecture.md, rules/code-style.md и rules/commits.md"
+    "roles.yaml, ignore, rules/architecture.md, rules/branches.md, rules/code-style.md и rules/commits.md"
 )
 def all_init_files_created() -> None:
     for relative_path in INIT_FILES:
@@ -58,6 +65,7 @@ def rules_are_nested() -> None:
     rules_dir = settings.agents_dir / "rules"
     assert rules_dir.is_dir()
     assert (rules_dir / "architecture.md").exists()
+    assert (rules_dir / "branches.md").exists()
     assert (rules_dir / "code-style.md").exists()
     assert (rules_dir / "commits.md").exists()
 
@@ -88,7 +96,13 @@ def roles_file_untouched() -> None:
 
 @then("остальные файлы конфигурации созданы")
 def other_init_files_created() -> None:
-    for relative_path in ["ignore", "rules/architecture.md", "rules/code-style.md", "rules/commits.md"]:
+    for relative_path in [
+        "ignore",
+        "rules/architecture.md",
+        "rules/branches.md",
+        "rules/code-style.md",
+        "rules/commits.md",
+    ]:
         assert (settings.agents_dir / relative_path).exists()
 
 
