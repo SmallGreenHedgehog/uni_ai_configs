@@ -63,7 +63,7 @@
 
     init-uni-ai
 
-Команда выполняется из корня целевого проекта, создаёт каталог из [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) и копирует в него шаблоны из пакета: роли ([`roles.yaml`](config/agents/roles.yaml)), правила ([`rules/`](config/agents/rules)) и ignore-шаблоны ([`ignore`](config/agents/ignore)). Создаются файлы [`roles.yaml`](config/agents/roles.yaml), [`ignore`](config/agents/ignore), [`rules/architecture.md`](config/agents/rules/architecture.md) и [`rules/code-style.md`](config/agents/rules/code-style.md). Файл [`rules/architecture.md`](config/agents/rules/architecture.md) создаётся как заглушка и предназначен для описания архитектуры проекта. Существующие файлы не перезаписываются; команда выводит списки созданных и пропущенных файлов.
+Команда выполняется из корня целевого проекта, создаёт каталог из [`UNI_AGENTS_PATH`](src/infrastructure/settings.py:18) и копирует в него шаблоны из пакета: роли ([`roles.yaml`](config/agents/roles.yaml)), правила ([`rules/`](config/agents/rules)) и ignore-шаблоны ([`ignore`](config/agents/ignore)). Создаются файлы [`roles.yaml`](config/agents/roles.yaml), [`ignore`](config/agents/ignore), [`rules/architecture.md`](config/agents/rules/architecture.md), [`rules/code-style.md`](config/agents/rules/code-style.md) и [`rules/commits.md`](config/agents/rules/commits.md). Файл [`rules/architecture.md`](config/agents/rules/architecture.md) создаётся как заглушка и предназначен для описания архитектуры проекта. Существующие файлы не перезаписываются; команда выводит списки созданных и пропущенных файлов.
 
 После инициализации файлы можно донастроить под проект.
 
