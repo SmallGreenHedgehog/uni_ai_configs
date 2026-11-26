@@ -64,14 +64,26 @@ jobs:
       - name: Build baseline CPython with shared libpython
         if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
+          run_quiet() {
+            log_file="$1"
+            shift
+            if "$@" > "$log_file" 2>&1; then
+              return 0
+            fi
+            tail -n 200 "$log_file"
+            return 1
+          }
+
           PYTHON_PREFIX="/opt/uni-ai-python"
           curl -fsSL "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz" | tar -xz
           cd "Python-${PYTHON_VERSION}"
-          CFLAGS="-march=x86-64 -mtune=generic" \
-          LDFLAGS="-Wl,-rpath,${PYTHON_PREFIX}/lib" \
+          run_quiet /tmp/configure.log env \
+            CFLAGS="-march=x86-64 -mtune=generic" \
+            LDFLAGS="-Wl,-rpath,${PYTHON_PREFIX}/lib" \
             ./configure --quiet --prefix="${PYTHON_PREFIX}" --enable-shared --with-ensurepip=install
-          make -s -j"$(nproc)"
-          make -s install
+          run_quiet /tmp/build.log make -s -j"$(nproc)"
+          run_quiet /tmp/install.log make -s install
+          echo "CPython built and installed"
 
       - name: Add CPython to PATH
         run: |
