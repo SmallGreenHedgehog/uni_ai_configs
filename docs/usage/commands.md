@@ -12,6 +12,7 @@
 - [`ignore`](config/agents/ignore) - ignore-шаблоны
 - [`rules/architecture.md`](config/agents/rules/architecture.md) - заглушка для описания архитектуры проекта
 - [`rules/code-style.md`](config/agents/rules/code-style.md) - правила оформления кода
+- [`rules/commits.md`](config/agents/rules/commits.md) - правила оформления коммитов
 
 Существующие файлы не перезаписываются. Команда выводит списки созданных и пропущенных файлов.
 
