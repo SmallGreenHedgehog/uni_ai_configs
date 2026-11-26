@@ -69,9 +69,9 @@ jobs:
           cd "Python-${PYTHON_VERSION}"
           CFLAGS="-march=x86-64 -mtune=generic" \
           LDFLAGS="-Wl,-rpath,${PYTHON_PREFIX}/lib" \
-            ./configure --prefix="${PYTHON_PREFIX}" --enable-shared --with-ensurepip=install
-          make -j"$(nproc)"
-          make install
+            ./configure --quiet --prefix="${PYTHON_PREFIX}" --enable-shared --with-ensurepip=install
+          make -s -j"$(nproc)"
+          make -s install
 
       - name: Add CPython to PATH
         run: |
