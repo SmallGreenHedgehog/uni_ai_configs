@@ -18,6 +18,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
         run: pip install -e ".[dev]"
@@ -37,18 +38,57 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build baseline CPython with shared libpython
+      - name: Cache baseline CPython
+        id: cache-python
+        uses: actions/cache@v4
+        with:
+          path: /opt/uni-ai-python
+          key: cpython-${{ env.PYTHON_VERSION }}-manylinux_2_28-x86_64-v1
+
+      - name: Install CPython build dependencies
+        if: steps.cache-python.outputs.cache-hit != 'true'
         run: |
+          yum install -y \
+            openssl-devel \
+            libffi-devel \
+            zlib-devel \
+            bzip2-devel \
+            xz-devel \
+            sqlite-devel \
+            readline-devel \
+            ncurses-devel \
+            gdbm-devel \
+            expat-devel \
+            libuuid-devel
+
+      - name: Build baseline CPython with shared libpython
+        if: steps.cache-python.outputs.cache-hit != 'true'
+        run: |
+          run_quiet() {
+            log_file="$1"
+            shift
+            if "$@" > "$log_file" 2>&1; then
+              return 0
+            fi
+            tail -n 200 "$log_file"
+            return 1
+          }
+
           PYTHON_PREFIX="/opt/uni-ai-python"
           curl -fsSL "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz" | tar -xz
           cd "Python-${PYTHON_VERSION}"
-          CFLAGS="-march=x86-64 -mtune=generic" \
-          LDFLAGS="-Wl,-rpath,${PYTHON_PREFIX}/lib" \
-            ./configure --prefix="${PYTHON_PREFIX}" --enable-shared --with-ensurepip=install
-          make -j"$(nproc)"
-          make install
-          echo "${PYTHON_PREFIX}/bin" >> "$GITHUB_PATH"
-          "${PYTHON_PREFIX}/bin/python3" --version
+          run_quiet /tmp/configure.log env \
+            CFLAGS="-march=x86-64 -mtune=generic" \
+            LDFLAGS="-Wl,-rpath,${PYTHON_PREFIX}/lib" \
+            ./configure --quiet --prefix="${PYTHON_PREFIX}" --enable-shared --with-ensurepip=install
+          run_quiet /tmp/build.log make -s -j"$(nproc)"
+          run_quiet /tmp/install.log make -s install
+          echo "CPython built and installed"
+
+      - name: Add CPython to PATH
+        run: |
+          echo "/opt/uni-ai-python/bin" >> "$GITHUB_PATH"
+          "/opt/uni-ai-python/bin/python3" --version
 
       - name: Install build dependencies
         run: |
@@ -90,6 +130,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: pyproject.toml
 
       - name: Install build dependencies
         run: pip install -e ".[nuitka]"

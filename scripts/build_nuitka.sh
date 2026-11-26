@@ -42,6 +42,7 @@ strip_extended_attributes() {
 
 build_binary() {
     python3 -m nuitka \
+        --assume-yes-for-downloads \
         --onefile \
         --onefile-tempdir-spec="{TEMP}/uni-ai" \
         --enable-plugin=anti-bloat \
