@@ -9,7 +9,7 @@ Feature: Инициализация конфигурации агентов
 
   Scenario: Инициализация создаёт все файлы конфигурации
     When инициализация конфигурации агентов выполнена
-    Then в каталоге конфигурации агентов созданы файлы конфигурации roles.yaml, ignore, rules/architecture.md и rules/code-style.md
+    Then в каталоге конфигурации агентов созданы файлы конфигурации roles.yaml, ignore, rules/architecture.md, rules/branches.md, rules/code-style.md и rules/commits.md
 
   Scenario Outline: Инициализация создаёт файл конфигурации с содержимым шаблона
     When инициализация конфигурации агентов выполнена
@@ -21,7 +21,9 @@ Feature: Инициализация конфигурации агентов
       | roles.yaml            |
       | ignore                |
       | rules/architecture.md |
+      | rules/branches.md     |
       | rules/code-style.md   |
+      | rules/commits.md      |
 
   Scenario: Инициализация сохраняет вложенную структуру правил
     When инициализация конфигурации агентов выполнена
